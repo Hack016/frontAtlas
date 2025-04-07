@@ -6,6 +6,9 @@ import { LoginScreen } from "./components/LoginScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { LoginFunction } from "./components/Login";
+import { RegisterFunction } from "./components/Register";
+// import { RegisterFunction } from "./components/prueba";
+
 import { Home } from "./components/Home";
 
 const Stack = createNativeStackNavigator();
@@ -16,6 +19,7 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="LoginForm" component={LoginFunction} />
+        <Stack.Screen name="RegisterForm" component={RegisterFunction} />
         <Stack.Screen name="Home" component={Home} />
       </Stack.Navigator>
       {/* <SafeAreaProvider>

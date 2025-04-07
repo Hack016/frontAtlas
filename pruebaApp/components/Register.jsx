@@ -6,19 +6,22 @@ import {
   Pressable,
   Text,
 } from "react-native";
-import React from "react";
 import { TextInput } from "react-native-paper";
+import React from "react";
 import { signInWithCredentials } from "../components/Signin";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
-export const LoginFunction = ({ navigation }) => {
+export const RegisterFunction = ({ navigation }) => {
   const [email, onChangeEmail] = React.useState("");
+  const [nombre, onChangeNombre] = React.useState("");
+  const [Username, onChangeUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [message, setMessage] = React.useState("");
+  const [passwordRepeated, setPasswordRepeated] = React.useState("");
 
-  async function handleLogin(email, password) {
+  async function handleRegister(email, password) {
     const result = await signInWithCredentials(email, password);
     if (result.success) {
       navigation.reset({
@@ -48,6 +51,26 @@ export const LoginFunction = ({ navigation }) => {
         />
         <TextInput
           style={styles.input}
+          label="Name"
+          onChangeText={onChangeNombre}
+          value={nombre}
+          mode="outlined"
+          outlineColor="#007BFF"
+          activeOutlineColor="#007BFF"
+          activeUnderlineColor="#007BFF"
+        />
+        <TextInput
+          style={styles.input}
+          label="Username"
+          onChangeText={onChangeUsername}
+          value={Username}
+          mode="outlined"
+          outlineColor="#007BFF"
+          activeOutlineColor="#007BFF"
+          activeUnderlineColor="#007BFF"
+        />
+        <TextInput
+          style={styles.input}
           label="Password"
           onChangeText={setPassword}
           value={password}
@@ -57,12 +80,26 @@ export const LoginFunction = ({ navigation }) => {
           activeOutlineColor="#007BFF"
           activeUnderlineColor="#007BFF"
         />
+        <TextInput
+          style={styles.input}
+          label="Repeat Password"
+          onChangeText={setPasswordRepeated}
+          value={passwordRepeated}
+          secureTextEntry
+          mode="outlined"
+          outlineColor="#007BFF"
+          activeOutlineColor="#007BFF"
+          activeUnderlineColor="#007BFF"
+        />
+        {/* if (password !== passwordRepeated) {
+        setMessage("Passwords do not match");
+      } */}
         <Pressable
           style={({ pressed }) =>
             pressed ? { ...styles.button, opacity: 0.5 } : styles.button
           }
           onPress={() => {
-            handleLogin(email, password);
+            handleRegister(email, password);
           }}
         >
           <Text>Submit</Text>
@@ -74,15 +111,19 @@ export const LoginFunction = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   scrollContainer: {
     alignItems: "center",
     paddingVertical: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  text: {
+    fontSize: 20,
+    fontFamily: "seriff",
+    fontStyle: "bold",
   },
   logo: {
     width: width * 0.2,

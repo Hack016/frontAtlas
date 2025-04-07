@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  ScrollView,
   View,
   Text,
   Pressable,
@@ -9,6 +10,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { signInWithGoogle } from "../components/Signin";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
@@ -28,62 +30,74 @@ export const LoginScreen = ({ navigation }) => {
     }
   }
   return (
-    <View style={styles.container}>
-      {/* Logo en el centro */}
-      <Image
-        source={require("../assets/TitanVectorizado.png")}
-        style={styles.logo}
-      />
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {/* Logo en el centro */}
+        <Image
+          source={require("../assets/TitanVectorizado.png")}
+          style={styles.logo}
+        />
 
-      <Text style={styles.appname}>Atlas Gym Tracker</Text>
-      <Text style={styles.text}>"Forge your strength, track your legacy"</Text>
+        <Text style={styles.appname}>Atlas Gym Tracker</Text>
+        <Text style={styles.text}>
+          "Forge your strength, track your legacy"
+        </Text>
 
-      {/* Botones de acción */}
-      <View style={styles.buttonContainer}>
-        <Pressable
-          style={({ pressed }) =>
-            pressed ? { ...styles.button, opacity: 0.5 } : styles.button
-          }
-          onPress={() => {
-            navigation.navigate("LoginForm");
-          }}
-        >
-          <Text style={styles.buttonText}>Log in</Text>
-        </Pressable>
+        {/* Botones de acción */}
+        <View style={styles.buttonContainer}>
+          <Pressable
+            style={({ pressed }) =>
+              pressed ? { ...styles.button, opacity: 0.5 } : styles.button
+            }
+            onPress={() => {
+              navigation.navigate("LoginForm");
+            }}
+          >
+            <Text style={styles.buttonText}>Log in</Text>
+          </Pressable>
 
-        <Pressable
-          style={({ pressed }) =>
-            pressed ? { ...styles.button, opacity: 0.5 } : styles.button
-          }
-        >
-          <Text style={styles.buttonText}>Register</Text>
-        </Pressable>
+          <Pressable
+            style={({ pressed }) =>
+              pressed ? { ...styles.button, opacity: 0.5 } : styles.button
+            }
+            onPress={() => {
+              navigation.navigate("RegisterForm");
+            }}
+          >
+            <Text style={styles.buttonText}>Register</Text>
+          </Pressable>
 
-        <Pressable
-          style={({ pressed }) =>
-            pressed
-              ? { ...styles.googleButton, opacity: 0.5 }
-              : styles.googleButton
-          }
-          onPress={handleGoogleLogin}
-        >
-          {loading ? (
-            <Text style={styles.text}>Logging in</Text>
-          ) : (
-            <>
-              <Icon name="google" size={20} color="#fff" style={styles.icon} />
-              <Text style={styles.buttonText}>Log in with Google</Text>
-            </>
-          )}
-        </Pressable>
-      </View>
-      {/*Mensaje de éxito o error */}
-      {message && (
-        <View style={{ marginTop: 20 }}>
-          <Text>{message}</Text>
+          <Pressable
+            style={({ pressed }) =>
+              pressed
+                ? { ...styles.googleButton, opacity: 0.5 }
+                : styles.googleButton
+            }
+            onPress={handleGoogleLogin}
+          >
+            {loading ? (
+              <Text style={styles.text}>Logging in</Text>
+            ) : (
+              <>
+                <Icon
+                  name="google"
+                  size={20}
+                  color="#fff"
+                  style={styles.icon}
+                />
+                <Text style={styles.buttonText}>Log in with Google</Text>
+              </>
+            )}
+          </Pressable>
         </View>
-      )}
-    </View>
+        {/*Mensaje de éxito o error */}
+        {message && (
+          <View style={{ marginTop: 20 }}>
+            <Text>{message}</Text>
+          </View>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -94,27 +108,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
   },
+  scrollContainer: {
+    alignItems: "center",
+    paddingVertical: 20,
+  },
   logo: {
     width: width * 0.6,
     height: width * 0.6,
-    marginBottom: 10,
+    marginBottom: 0,
   },
   appname: {
     fontSize: 25,
     fontWeight: "bold",
     fontFamily: "cursive",
-    marginBottom: 10,
+    marginVertical: 10,
   },
   text: {
     fontSize: 20,
-    marginBottom: 200,
+    marginVertical: 10,
     fontFamily: "seriff",
     fontStyle: "italic",
   },
   buttonContainer: {
     width: "80%",
-    position: "absolute",
-    bottom: 50,
   },
   button: {
     backgroundColor: "#007BFF",
