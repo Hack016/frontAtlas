@@ -6,9 +6,9 @@ import {
   Pressable,
   Text,
 } from "react-native";
-import { TextInput } from "react-native-paper";
+import { TextInput, ActivityIndicator } from "react-native-paper";
 import React from "react";
-import { signInWithCredentials } from "../components/Signin";
+import { registerWithCredentials } from "../components/Signin";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
@@ -16,20 +16,98 @@ const { width } = Dimensions.get("window");
 export const RegisterFunction = ({ navigation }) => {
   const [email, onChangeEmail] = React.useState("");
   const [nombre, onChangeNombre] = React.useState("");
-  const [Username, onChangeUsername] = React.useState("");
+  const [username, onChangeUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [message, setMessage] = React.useState("");
   const [passwordRepeated, setPasswordRepeated] = React.useState("");
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPasswordRepeated, setShowPasswordRepeated] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
-  async function handleRegister(email, password) {
-    const result = await signInWithCredentials(email, password);
+  //variables de error
+  const [errorpassword, seterrorpassword] = React.useState("");
+  const [erroremail, seterroremail] = React.useState("");
+  const [errorusername, seterrorusername] = React.useState("");
+  const [errorname, seterrorname] = React.useState("");
+  const [errorgeneral, seterrorgeneral] = React.useState("");
+
+  const validateEmailFormat = (email) => {
+    // Expresión regular para validar el email
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  };
+  async function handleRegister(email, username, name, password) {
+    // Limpiar los mensajes de error
+    seterrorpassword("");
+    seterroremail("");
+    seterrorusername("");
+    seterrorgeneral("");
+    seterrorname("");
+    let error = false;
+
+    if (!email) {
+      seterroremail("Email is required");
+      error = true;
+    } else if (!validateEmailFormat(email)) {
+      seterroremail("Invalid email format");
+      error = true;
+    }
+
+    if (!username) {
+      seterrorusername("Username is required");
+      error = true;
+    }
+
+    if (!name) {
+      seterrorname("Name is required");
+      error = true;
+    }
+
+    if (!password) {
+      seterrorpassword("Password is required");
+      error = true;
+    }
+
+    if (!passwordRepeated) {
+      seterrorpassword("Please repeat your password");
+      error = true;
+    } else if (password !== passwordRepeated) {
+      seterrorpassword("Passwords do not match");
+      error = true;
+    }
+
+    if (error) {
+      return;
+    }
+
+    setIsLoading(true);
+    const result = await registerWithCredentials(
+      email,
+      username,
+      name,
+      password
+    );
+    setIsLoading(false);
+
     if (result.success) {
       navigation.reset({
         index: 0,
         routes: [{ name: "Home" }],
       });
     } else {
-      setMessage("Login failed :( Username equals to " + email);
+      if (result.error === "This email is already registered.") {
+        seterroremail("This email is already registered.");
+      } else if (result.error === "The username is already in use.") {
+        seterrorusername("The username is already in use.");
+      } else if (
+        result.error ===
+        "This password must contain:\n - at least 1 digit\n - at least 1 upper case letter\n - at least 1 special character"
+      ) {
+        seterrorpassword(
+          "This password must contain:\n - at least 1 digit\n - at least 1 upper case letter\n - at least 1 special character \n - at least 8 characters"
+        );
+      } else {
+        seterrorgeneral("Failed to register, try again later.");
+      }
     }
   }
   return (
@@ -39,6 +117,7 @@ export const RegisterFunction = ({ navigation }) => {
           source={require("../assets/TitanVectorizado.png")}
           style={styles.logo}
         />
+        {erroremail !== "" && <Text style={styles.error}>{erroremail}</Text>}
         <TextInput
           style={styles.input}
           label="Email"
@@ -49,6 +128,20 @@ export const RegisterFunction = ({ navigation }) => {
           activeOutlineColor="#007BFF"
           activeUnderlineColor="#007BFF"
         />
+        {errorusername !== "" && (
+          <Text style={styles.error}>{errorusername}</Text>
+        )}
+        <TextInput
+          style={styles.input}
+          label="Username"
+          onChangeText={onChangeUsername}
+          value={username}
+          mode="outlined"
+          outlineColor="#007BFF"
+          activeOutlineColor="#007BFF"
+          activeUnderlineColor="#007BFF"
+        />
+        {errorname !== "" && <Text style={styles.error}>{errorname}</Text>}
         <TextInput
           style={styles.input}
           label="Name"
@@ -59,52 +152,64 @@ export const RegisterFunction = ({ navigation }) => {
           activeOutlineColor="#007BFF"
           activeUnderlineColor="#007BFF"
         />
-        <TextInput
-          style={styles.input}
-          label="Username"
-          onChangeText={onChangeUsername}
-          value={Username}
-          mode="outlined"
-          outlineColor="#007BFF"
-          activeOutlineColor="#007BFF"
-          activeUnderlineColor="#007BFF"
-        />
+        {errorpassword !== "" && (
+          <Text style={styles.error}>{errorpassword}</Text>
+        )}
         <TextInput
           style={styles.input}
           label="Password"
           onChangeText={setPassword}
           value={password}
-          secureTextEntry
+          secureTextEntry={!showPassword}
           mode="outlined"
           outlineColor="#007BFF"
           activeOutlineColor="#007BFF"
           activeUnderlineColor="#007BFF"
+          right={
+            <TextInput.Icon
+              icon={showPassword ? "eye-off" : "eye"}
+              onPress={() => setShowPassword(!showPassword)}
+            />
+          }
         />
+        {errorpassword !== "" && (
+          <Text style={styles.error}>{errorpassword}</Text>
+        )}
         <TextInput
           style={styles.input}
           label="Repeat Password"
           onChangeText={setPasswordRepeated}
           value={passwordRepeated}
-          secureTextEntry
+          secureTextEntry={!showPasswordRepeated}
           mode="outlined"
           outlineColor="#007BFF"
           activeOutlineColor="#007BFF"
           activeUnderlineColor="#007BFF"
+          right={
+            <TextInput.Icon
+              icon={showPasswordRepeated ? "eye-off" : "eye"}
+              onPress={() => setShowPasswordRepeated(!showPasswordRepeated)}
+            />
+          }
         />
-        {/* if (password !== passwordRepeated) {
-        setMessage("Passwords do not match");
-      } */}
         <Pressable
+          disabled={isLoading}
           style={({ pressed }) =>
             pressed ? { ...styles.button, opacity: 0.5 } : styles.button
           }
           onPress={() => {
-            handleRegister(email, password);
+            handleRegister(email, username, nombre, password);
           }}
         >
-          <Text>Submit</Text>
+          {isLoading ? (
+            <ActivityIndicator color="white" size="small" />
+          ) : (
+            <Text style={styles.buttonText}>Submit</Text>
+          )}
         </Pressable>
-        <Text>{message}</Text>
+        {errorgeneral !== "" && (
+          <Text style={styles.error}>{errorgeneral}</Text>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -144,5 +249,17 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     flexDirection: "row",
     justifyContent: "center",
+  },
+  error: {
+    color: "red",
+    fontSize: 16,
+    marginTop: 10,
+    textAlign: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });

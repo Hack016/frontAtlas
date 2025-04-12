@@ -7,7 +7,7 @@ import {
   Text,
 } from "react-native";
 import React from "react";
-import { TextInput } from "react-native-paper";
+import { TextInput, ActivityIndicator } from "react-native-paper";
 import { signInWithCredentials } from "../components/Signin";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -16,17 +16,57 @@ const { width } = Dimensions.get("window");
 export const LoginFunction = ({ navigation }) => {
   const [email, onChangeEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [message, setMessage] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  //variables de error
+  const [errorpassword, seterrorpassword] = React.useState("");
+  const [erroremail, seterroremail] = React.useState("");
+  const [errorgeneral, seterrorgeneral] = React.useState("");
+
+  const validateEmailFormat = (email) => {
+    // Expresión regular para validar el email
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  };
 
   async function handleLogin(email, password) {
+    seterroremail("");
+    seterrorpassword("");
+    seterrorgeneral("");
+    let error = false;
+
+    if (!email) {
+      seterroremail("Email is required");
+      error = true;
+    } else if (!validateEmailFormat(email)) {
+      seterroremail("Invalid email format");
+      error = true;
+    }
+
+    if (!password) {
+      seterrorpassword("Password is required");
+      error = true;
+    }
+
+    if (error) {
+      return;
+    }
+
+    setIsLoading(true);
     const result = await signInWithCredentials(email, password);
+    setIsLoading(false);
+
     if (result.success) {
       navigation.reset({
         index: 0,
         routes: [{ name: "Home" }],
       });
     } else {
-      setMessage("Login failed :( Username equals to " + email);
+      if (result.error === "Credenciales incorrectas") {
+        seterrorgeneral("Login failed: Incorrect email or password");
+      } else {
+        seterrorgeneral("Login failed: Unexpected error, try again later");
+      }
     }
   }
   return (
@@ -36,6 +76,7 @@ export const LoginFunction = ({ navigation }) => {
           source={require("../assets/TitanVectorizado.png")}
           style={styles.logo}
         />
+        {erroremail !== "" && <Text style={styles.error}>{erroremail}</Text>}
         <TextInput
           style={styles.input}
           label="Email"
@@ -46,6 +87,9 @@ export const LoginFunction = ({ navigation }) => {
           activeOutlineColor="#007BFF"
           activeUnderlineColor="#007BFF"
         />
+        {errorpassword !== "" && (
+          <Text style={styles.error}>{errorpassword}</Text>
+        )}
         <TextInput
           style={styles.input}
           label="Password"
@@ -65,9 +109,15 @@ export const LoginFunction = ({ navigation }) => {
             handleLogin(email, password);
           }}
         >
-          <Text>Submit</Text>
+          {isLoading ? (
+            <ActivityIndicator color="white" size="small" />
+          ) : (
+            <Text style={styles.buttonText}>Submit</Text>
+          )}
         </Pressable>
-        <Text>{message}</Text>
+        {errorgeneral !== "" && (
+          <Text style={styles.error}>{errorgeneral}</Text>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -103,5 +153,17 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     flexDirection: "row",
     justifyContent: "center",
+  },
+  error: {
+    color: "red",
+    fontSize: 16,
+    marginTop: 10,
+    textAlign: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
