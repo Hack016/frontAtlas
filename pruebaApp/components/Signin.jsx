@@ -36,12 +36,12 @@ export async function signInWithCredentials(email, password) {
       body: JSON.stringify({ email: email, password: password }),
     });
 
-    const data = await response.json();
+    const tokens = await response.json();
 
     if (response.ok) {
-      return { success: true, data };
+      return { success: true, tokens };
     } else {
-      return { success: false, error: data.error || "Login Failed" };
+      return { success: false, error: tokens.error || "Login Failed" };
     }
   } catch (error) {
     return { success: false, error };
@@ -63,12 +63,12 @@ export async function registerWithCredentials(email, username, name, password) {
       }),
     });
 
-    const data = await response.json();
+    const tokens = await response.json();
 
     if (response.ok) {
-      return { success: true, data };
+      return { success: true, tokens };
     } else {
-      return { success: false, error: data.error || "Register Failed" };
+      return { success: false, error: tokens.error || "Register Failed" };
     }
   } catch (error) {
     return { success: false, error };

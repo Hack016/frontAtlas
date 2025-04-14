@@ -6,7 +6,8 @@ import {
   Pressable,
   Text,
 } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 import { TextInput, ActivityIndicator } from "react-native-paper";
 import { signInWithCredentials } from "../components/Signin";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,6 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const { width } = Dimensions.get("window");
 
 export const LoginFunction = ({ navigation }) => {
+  const { logTokens } = useContext(AuthContext);
   const [email, onChangeEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
@@ -57,6 +59,9 @@ export const LoginFunction = ({ navigation }) => {
     setIsLoading(false);
 
     if (result.success) {
+      // Guardar tokens en AsyncStorage
+      const tokens = result.tokens;
+      await logTokens(tokens);
       navigation.reset({
         index: 0,
         routes: [{ name: "Home" }],
