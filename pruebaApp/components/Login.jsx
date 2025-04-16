@@ -18,6 +18,7 @@ export const LoginFunction = ({ navigation }) => {
   const { logTokens } = useContext(AuthContext);
   const [email, onChangeEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [showPassword, setShowPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
 
   //variables de error
@@ -87,6 +88,7 @@ export const LoginFunction = ({ navigation }) => {
           label="Email"
           onChangeText={onChangeEmail}
           value={email}
+          keyboardType="email-address"
           mode="outlined"
           outlineColor="#007BFF"
           activeOutlineColor="#007BFF"
@@ -100,11 +102,17 @@ export const LoginFunction = ({ navigation }) => {
           label="Password"
           onChangeText={setPassword}
           value={password}
-          secureTextEntry
+          secureTextEntry={!showPassword}
           mode="outlined"
           outlineColor="#007BFF"
           activeOutlineColor="#007BFF"
           activeUnderlineColor="#007BFF"
+          right={
+            <TextInput.Icon
+              icon={showPassword ? "eye-off" : "eye"}
+              onPress={() => setShowPassword(!showPassword)}
+            />
+          }
         />
         <Pressable
           style={({ pressed }) =>

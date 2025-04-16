@@ -128,6 +128,7 @@ export const RegisterFunction = ({ navigation }) => {
           label="Email"
           onChangeText={onChangeEmail}
           value={email}
+          keyboardType="email-address"
           mode="outlined"
           outlineColor="#007BFF"
           activeOutlineColor="#007BFF"

@@ -4,12 +4,12 @@ import { useContext } from "react";
 import { atob } from "atob";
 
 export const useFetchWithAuth = () => {
-  const { authTokens, setAuthTokens, logout } = useContext(AuthContext);
+  const { authTokens, logTokens, logout } = useContext(AuthContext);
 
   function decodeJwt(token) {
     try {
       const base64Payload = token.split(".")[1];
-      const payload = atob(base64Payload.replace(/-/g, "+").replace(/_/g, "/")); //Decodifica el token de base64
+      const payload = atob(base64Payload.replace(/-/g, "+").replace(/_/g, "/")); //Decodifica el token de base64 para luego obtener el campo de expiración
       return JSON.parse(payload);
     } catch (e) {
       return null;
@@ -17,7 +17,7 @@ export const useFetchWithAuth = () => {
   }
 
   const fetchWithAuth = async (url, options = {}) => {
-    const accessToken = authTokens?.access;
+    let accessToken = authTokens?.access;
     const decoded = decodeJwt(accessToken);
 
     if (decoded?.exp) {
@@ -25,12 +25,13 @@ export const useFetchWithAuth = () => {
       const secondsLeft = decoded.exp - now;
 
       if (secondsLeft < 30) {
-        const newTokens = await refreshToken();
+        let newTokens = await refreshToken();
         if (newTokens) {
           accessToken = newTokens.access;
         } else {
+          console.log("Token unavailable");
           await logout();
-          throw new Error("Token unavailable");
+          throw new Error("Token invalid or expired");
         }
       }
     }
@@ -42,10 +43,28 @@ export const useFetchWithAuth = () => {
       "Content-Type": "application/json",
     };
 
-    const response = await fetch(url, {
+    let response = await fetch(url, {
       ...options,
       headers,
     });
+
+    if (response.status === 401) {
+      let newTokens = await refreshToken();
+      if (newTokens) {
+        accessToken = newTokens.access;
+        response = await fetch(url, {
+          ...options,
+          headers: {
+            ...(options.headers || {}),
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        await logout();
+        throw new Error("Token invalid or expired");
+      }
+    }
 
     return response;
   };
@@ -73,7 +92,7 @@ export const useFetchWithAuth = () => {
       };
 
       await AsyncStorage.setItem("authTokens", JSON.stringify(newTokens));
-      setAuthTokens(newTokens);
+      logTokens(newTokens);
       return newTokens;
     } catch (e) {
       await logout(); // Cerrar sesión si hay fallo de red

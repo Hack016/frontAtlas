@@ -27,26 +27,21 @@ const AppContent = () => {
 
   return (
     <NavigationContainer>
-      {authTokens ? (
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{ headerShown: false }}
-        />
-      ) : (
-        <>
-          {" "}
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="LoginForm" component={LoginFunction} />
-          <Stack.Screen name="RegisterForm" component={RegisterFunction} />
-        </>
-      )}
-      {/* <Stack.Navigator>
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="LoginForm" component={LoginFunction} />
-          <Stack.Screen name="RegisterForm" component={RegisterFunction} />
-          <Stack.Screen name="Home" component={Home} />
-        </Stack.Navigator> */}
+      <Stack.Navigator>
+        {authTokens ? (
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{ headerShown: false }}
+          />
+        ) : (
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="LoginForm" component={LoginFunction} />
+            <Stack.Screen name="RegisterForm" component={RegisterFunction} />
+          </>
+        )}
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };
