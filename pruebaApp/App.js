@@ -11,6 +11,7 @@ import { View } from "react-native";
 // import { RegisterFunction } from "./components/prueba";
 
 import { Home } from "./components/Home";
+import ExerciseDetail from "./components/screens/ExerciseDetail";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,13 +28,26 @@ const AppContent = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          headerTitleAlign: "center",
+        }}
+      >
         {authTokens ? (
-          <Stack.Screen
-            name="Home"
-            component={Home}
-            options={{ headerShown: false }}
-          />
+          <>
+            <Stack.Screen
+              name="Home"
+              component={Home}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ExerciseDetail"
+              component={ExerciseDetail}
+              options={({ route }) => ({
+                title: route.params.nombreEjercicio || "Ejercicio",
+              })}
+            />
+          </>
         ) : (
           <>
             <Stack.Screen name="Login" component={LoginScreen} />

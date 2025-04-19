@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "pruebaApp",
-    "slug": "pruebaApp",
+    "name": "AtlasApp",
+    "slug": "AtlasApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/TitanVectorizado.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -25,6 +25,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e778c401-4a0f-4fc8-b32d-e09bad007a33"
+      }
     }
   }
 }

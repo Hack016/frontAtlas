@@ -7,10 +7,15 @@ import {
   Text,
   RefreshControl,
   Image,
+  Pressable,
 } from "react-native";
 import { useFetchWithAuth } from "../../utils/fetchWithAuth";
+import { useNavigation } from "@react-navigation/native";
+import { BASE_URL } from "../../context/config";
 
 export default function TrainFeedScreen() {
+  const navigation = useNavigation();
+
   const fetchWithAuth = useFetchWithAuth();
 
   const [exercises, setExercises] = React.useState([]);
@@ -19,15 +24,11 @@ export default function TrainFeedScreen() {
   const fetchExercises = async () => {
     try {
       setRefreshing(true);
-      const response = await fetchWithAuth(
-        "http://localhost:8000/api/EjercicioFeed/",
-        {
-          method: "GET",
-        }
-      );
-      // const response = await fetch("http://localhost:8000/api/EjercicioFeed/", {
-      //   method: "GET",
-      // });
+      console.log(BASE_URL);
+      const response = await fetchWithAuth(`${BASE_URL}api/EjercicioFeed/`, {
+        method: "GET",
+      });
+
       setRefreshing(false);
 
       const data = await response.json();
@@ -56,7 +57,16 @@ export default function TrainFeedScreen() {
         }
       >
         {exercises.map((item) => (
-          <View key={item.idEjercicio} style={styles.card}>
+          <Pressable
+            key={item.idEjercicio}
+            style={styles.card}
+            onPress={() =>
+              navigation.navigate("ExerciseDetail", {
+                idEjercicio: item.idEjercicio,
+                nombreEjercicio: item.nombre, // Le paso el nombre para que el titulo de la página sea el nombre del ejercicio
+              })
+            }
+          >
             {item.imagen && (
               <Image source={{ uri: item.imagen }} style={styles.image} />
             )}
@@ -66,7 +76,7 @@ export default function TrainFeedScreen() {
                 Músculos: {item.musculos_principales.join(", ")}
               </Text>
             </View>
-          </View>
+          </Pressable>
         ))}
       </ScrollView>
     </SafeAreaView>
@@ -83,7 +93,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     padding: 12,
-    backgroundColor: "white", // fondo oscuro
+    backgroundColor: "white",
     borderBottomWidth: 1,
     borderBottomColor: "#333",
   },

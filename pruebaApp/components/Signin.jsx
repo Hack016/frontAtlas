@@ -1,5 +1,5 @@
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BASE_URL } from "../context/config";
 
 GoogleSignin.configure({
   webClientId:
@@ -12,7 +12,7 @@ export async function signInWithGoogle() {
     const idToken = userInfo.idToken; // Este es el token que enviamos a Django
 
     // Ahora enviamos este ID Token al backend para autenticar
-    const response = await fetch("http://localhost:8000/api/login/google/", {
+    const response = await fetch(`${BASE_URL}api/login/google/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token: idToken }),
@@ -28,7 +28,7 @@ export async function signInWithGoogle() {
 
 export async function signInWithCredentials(email, password) {
   try {
-    const response = await fetch("http://localhost:8000/api/login/", {
+    const response = await fetch(`${BASE_URL}api/login/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,7 +50,7 @@ export async function signInWithCredentials(email, password) {
 
 export async function registerWithCredentials(email, username, name, password) {
   try {
-    const response = await fetch("http://localhost:8000/api/register/", {
+    const response = await fetch(`${BASE_URL}api/register/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
