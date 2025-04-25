@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeFeedScreen from "./home/HomeFeedScreen";
 import ProfileFeedScreen from "./home/ProfileFeedScreen";
 import TrainFeedScreen from "./home/TrainFeedScreen";
-import { MaterialCommunityIcons, FontAwesome6 } from "@expo/vector-icons"; // o react-native-vector-icons
+import { MaterialCommunityIcons, FontAwesome6 } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 

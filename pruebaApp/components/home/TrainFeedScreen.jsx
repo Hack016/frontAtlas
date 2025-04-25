@@ -104,28 +104,6 @@ export default function TrainFeedScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {/* <ScrollView
-        onScroll={({ nativeEvent }) => {
-          const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
-          const isCloseToBottom = // variable para hacer scroll infinito
-            layoutMeasurement.height + contentOffset.y >=
-            contentSize.height - 50;
-
-          if (isCloseToBottom) {
-            fetchExercises(); // Carga más si está cerca del final
-          }
-        }}
-        scrollEventThrottle={400}
-        contentContainerStyle={styles.scrollContainer}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => fetchExercises(true)}
-          />
-        }
-      >
-        {exercises.map((item) => renderItem({ item }))}
-      </ScrollView> */}
       <FlatList
         data={exercises}
         renderItem={renderItem}
