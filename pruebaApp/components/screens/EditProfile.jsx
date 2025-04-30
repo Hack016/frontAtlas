@@ -8,16 +8,17 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Pressable,
-  Picker,
   Alert,
 } from "react-native";
 import { useFetchWithAuth } from "../../utils/fetchWithAuth";
 import { BASE_URL } from "../../context/config";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { Picker } from "@react-native-picker/picker";
 import { changeProfilePicture } from "../ChangeProfilePicture";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useNavigation } from "@react-navigation/native";
 import { getUserAvatar } from "../../utils/avatar";
+import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 
 export const EditProfile = () => {
   const navigation = useNavigation();
@@ -114,11 +115,26 @@ export const EditProfile = () => {
       nuevaFoto.uri &&
       nuevaFoto.uri !== profileData.foto_perfil
     ) {
-      formData.append("foto_perfil", {
-        uri: nuevaFoto.uri,
-        name: nuevaFoto.name || "profile.png",
-        type: nuevaFoto.type || "image/png",
-      });
+      if (nuevaFoto.uri.startsWith("file://")) {
+        // Comprimir imagen para que sea válida y compatible
+        const manipResult = await manipulateAsync(
+          nuevaFoto.uri,
+          [{ resize: { width: 800 } }],
+          { compress: 0.7, format: SaveFormat.PNG }
+        );
+
+        const file = {
+          uri: manipResult.uri,
+          name: "profile.png",
+          type: "image/png",
+        };
+
+        formData.append("foto_perfil", file);
+      } else {
+        console.error("Imagen no válida", nuevaFoto);
+        Alert.alert("Error", "La imagen seleccionada no es válida.");
+        return;
+      }
       hasChanges = true;
     }
 
@@ -170,9 +186,7 @@ export const EditProfile = () => {
           source={
             nuevaFoto && nuevaFoto.uri
               ? { uri: nuevaFoto.uri }
-              : profileData?.foto_perfil
-                ? { uri: profileData.foto_perfil }
-                : getUserAvatar(profileData)
+              : getUserAvatar(profileData)
           }
           style={styles.fotoPerfil}
         />
@@ -231,8 +245,7 @@ export const EditProfile = () => {
 
         <View style={styles.fila}>
           <Text style={styles.label}>Birthday:</Text>
-          <Pressable onPress={() => console.log(nuevaFecha.toLocaleString())}>
-            {/* setMostrarPickerFecha(true) */}
+          <Pressable onPress={() => setMostrarPickerFecha(true)}>
             <Text style={styles.fecha}>
               {nuevaFecha
                 ? nuevaFecha.toLocaleString("en-US", {
@@ -250,8 +263,8 @@ export const EditProfile = () => {
             value={nuevaFecha}
             mode="date"
             display="default"
-            onChange={handleFechaChange}
             maximumDate={new Date()}
+            onChange={handleFechaChange}
           />
         )}
 
@@ -343,10 +356,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   saveButton: {
-    backgroundColor: "#28a745",
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 30,
+    backgroundColor: "#007BFF",
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 20,
     alignItems: "center",
   },
   saveButtonText: {

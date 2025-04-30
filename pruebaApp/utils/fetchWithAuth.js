@@ -38,12 +38,17 @@ export const useFetchWithAuth = () => {
     }
     const isFormData = options.body instanceof FormData; //Ver si se manda FormData en la petición
 
-    // Añadir Authorization header
-    const headers = {
-      ...(options.headers || {}),
+    let headers = {
       Authorization: `Bearer ${accessToken}`,
-      ...(isFormData ? {} : { "Content-Type": "application/json" }),
     };
+
+    if (!isFormData) {
+      headers["Content-Type"] = "application/json";
+    }
+
+    if (options.headers) {
+      headers = { ...headers, ...options.headers };
+    }
 
     let response = await fetch(url, {
       ...options,

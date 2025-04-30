@@ -10,11 +10,16 @@ import { AuthContext } from "./context/AuthContext";
 import { useContext } from "react";
 import { ActivityIndicator } from "react-native-paper";
 import { View } from "react-native";
+import { StatusBar } from "react-native";
 // import { RegisterFunction } from "./components/prueba";
 
 import { Home } from "./components/Home";
 import ExerciseDetail from "./components/screens/ExerciseDetail";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
+import { OptionalInfo } from "./components/optionalInfo";
+import { AccountSettings } from "./components/screens/AccountSettings";
+import { ChangeUsername } from "./components/screens/changeUsername";
+import { ChangeEmail } from "./components/screens/changeEmail";
 
 const Stack = createNativeStackNavigator();
 
@@ -31,38 +36,58 @@ const AppContent = () => {
 
   return (
     <ActionSheetProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            headerTitleAlign: "center",
-          }}
-        >
-          {authTokens ? (
-            <>
-              <Stack.Screen
-                name="Home"
-                component={Home}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="ExerciseDetail"
-                component={ExerciseDetail}
-                options={({ route }) => ({
-                  title: route.params.nombreEjercicio || "Ejercicio",
-                })}
-              />
-              <Stack.Screen name="Settings" component={Settings} />
-              <Stack.Screen name="EditProfile" component={EditProfile} />
-            </>
-          ) : (
-            <>
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="LoginForm" component={LoginFunction} />
-              <Stack.Screen name="RegisterForm" component={RegisterFunction} />
-            </>
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
+      <>
+        <StatusBar backgroundColor="white" barStyle="dark-content" />
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              headerTitleAlign: "center",
+            }}
+          >
+            {authTokens ? (
+              <>
+                <Stack.Screen
+                  name="Home"
+                  component={Home}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="ExerciseDetail"
+                  component={ExerciseDetail}
+                  options={({ route }) => ({
+                    title: route.params.nombreEjercicio || "Ejercicio",
+                  })}
+                />
+                <Stack.Screen name="Settings" component={Settings} />
+                <Stack.Screen name="EditProfile" component={EditProfile} />
+                <Stack.Screen
+                  name="AccountSettings"
+                  component={AccountSettings}
+                />
+                <Stack.Screen
+                  name="changeUsername"
+                  component={ChangeUsername}
+                />
+                <Stack.Screen name="changeEmail" component={ChangeEmail} />
+              </>
+            ) : (
+              <>
+                <Stack.Screen name="Login" component={LoginScreen} />
+                <Stack.Screen name="LoginForm" component={LoginFunction} />
+                <Stack.Screen
+                  name="RegisterForm"
+                  component={RegisterFunction}
+                />
+                <Stack.Screen
+                  name="OptionalInfo"
+                  component={OptionalInfo}
+                  options={{ headerShown: false }}
+                />
+              </>
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </>
     </ActionSheetProvider>
   );
 };

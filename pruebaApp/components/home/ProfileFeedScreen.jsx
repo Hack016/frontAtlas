@@ -235,7 +235,12 @@ export default function ProfileFeedScreen() {
               style={styles.profileImage}
             />
             <Pressable
-              onPress={() => navigation.navigate("EditProfile")}
+              onPress={() =>
+                navigation.navigate("Settings", {
+                  email: profileData.usuario.email,
+                  username: profileData.usuario.username,
+                })
+              }
               style={styles.settingsButton}
             >
               <Icon name="settings-outline" size={24} />

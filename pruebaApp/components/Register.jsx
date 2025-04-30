@@ -7,15 +7,15 @@ import {
   Text,
 } from "react-native";
 import { TextInput, ActivityIndicator } from "react-native-paper";
-import { AuthContext } from "../context/AuthContext";
-import React, { useContext } from "react";
+// import { AuthContext } from "../context/AuthContext";
+import React from "react";
 import { registerWithCredentials } from "../components/Signin";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
 export const RegisterFunction = ({ navigation }) => {
-  const { logTokens } = useContext(AuthContext);
+  // const { logTokens } = useContext(AuthContext);
   const [email, onChangeEmail] = React.useState("");
   const [nombre, onChangeNombre] = React.useState("");
   const [username, onChangeUsername] = React.useState("");
@@ -91,12 +91,17 @@ export const RegisterFunction = ({ navigation }) => {
     setIsLoading(false);
 
     if (result.success) {
-      // Guardar tokens en AsyncStorage
+      // Guardar tokens en AsyncStorage, NO guardarlos aquí porque sino nos redirige directamente a Home y queremos que muestre una pantalla antes
       const tokens = result.tokens;
-      await logTokens(tokens);
+      // await logTokens(tokens);
       navigation.reset({
         index: 0,
-        routes: [{ name: "Home" }],
+        routes: [
+          {
+            name: "OptionalInfo",
+            params: { nombreUsuario: nombre, tokens: tokens },
+          },
+        ],
       });
     } else {
       if (result.error === "This email is already registered.") {

@@ -5,43 +5,40 @@ import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
 import { useRoute } from "@react-navigation/native";
 
-export const Settings = () => {
+export const AccountSettings = () => {
   const { logout } = useContext(AuthContext);
   const navigation = useNavigation();
   const route = useRoute();
   const { email, username } = route.params;
   return (
     <ScrollView contentContainerStyle={styles.scrollcontainer}>
-      <Text style={styles.typeSettingsText}>Account</Text>
+      <Text style={styles.typeSettingsText}>Edit Account profile</Text>
       <Pressable
         style={styles.card}
-        onPress={() => navigation.navigate("EditProfile")}
+        onPress={() =>
+          navigation.navigate("changeUsername", { username: username })
+        }
       >
         <View style={styles.rowCard}>
           <MaterialCommunityIcons name="account" size={24} />
-          <Text style={styles.text}>Profile</Text>
+          <Text style={styles.text}>Change username</Text>
         </View>
         <Entypo name="chevron-right" size={24} />
       </Pressable>
       <Pressable
         style={styles.card}
-        onPress={() =>
-          navigation.navigate("AccountSettings", {
-            email: email,
-            username: username,
-          })
-        }
+        onPress={() => navigation.navigate("changeEmail", { email: email })}
       >
         <View style={styles.rowCard}>
           <Entypo name="lock" size={24} />
-          <Text style={styles.text}>Account</Text>
+          <Text style={styles.text}>Change email</Text>
         </View>
         <Entypo name="chevron-right" size={24} />
       </Pressable>
       <Pressable style={styles.card} onPress={() => console.log("Theme")}>
         <View style={styles.rowCard}>
           <Entypo name="moon" size={24} />
-          <Text style={styles.text}>Theme</Text>
+          <Text style={styles.text}>Update password</Text>
         </View>
         <Entypo name="chevron-right" size={24} />
       </Pressable>
@@ -53,7 +50,7 @@ export const Settings = () => {
         }
         onPress={() => logout()}
       >
-        <Text style={[styles.text, { color: "white" }]}>Logout</Text>
+        <Text style={[styles.text, { color: "white" }]}>Delete account</Text>
       </Pressable>
     </ScrollView>
   );
