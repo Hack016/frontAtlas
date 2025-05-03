@@ -20,6 +20,10 @@ import { OptionalInfo } from "./components/optionalInfo";
 import { AccountSettings } from "./components/screens/AccountSettings";
 import { ChangeUsername } from "./components/screens/changeUsername";
 import { ChangeEmail } from "./components/screens/changeEmail";
+import TrainFeedScreen from "./components/home/TrainFeedScreen";
+import { WorkoutSession } from "./components/screens/WorkoutSession";
+import { WorkoutProvider } from "./context/WorkoutContext";
+import ExerciseFeed from "./components/screens/ExerciseFeed";
 
 const Stack = createNativeStackNavigator();
 
@@ -61,14 +65,20 @@ const AppContent = () => {
                 <Stack.Screen name="Settings" component={Settings} />
                 <Stack.Screen name="EditProfile" component={EditProfile} />
                 <Stack.Screen
-                  name="AccountSettings"
+                  name="Account Settings"
                   component={AccountSettings}
                 />
                 <Stack.Screen
-                  name="changeUsername"
+                  name="Change Username"
                   component={ChangeUsername}
                 />
-                <Stack.Screen name="changeEmail" component={ChangeEmail} />
+                <Stack.Screen name="Change Email" component={ChangeEmail} />
+                <Stack.Screen name="Exercises" component={TrainFeedScreen} />
+                <Stack.Screen
+                  name="Workout Session"
+                  component={WorkoutSession}
+                />
+                <Stack.Screen name="Exercise Feed" component={ExerciseFeed} />
               </>
             ) : (
               <>
@@ -94,7 +104,9 @@ const AppContent = () => {
 export default function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <WorkoutProvider>
+        <AppContent />
+      </WorkoutProvider>
     </AuthProvider>
   );
 }

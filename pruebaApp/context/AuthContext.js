@@ -34,14 +34,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Función para eliminar tokens (logout), se supone que al eliminar del contexto los tokens te redirige a la pantalla login
+  // Función para eliminar tokens (logout), al eliminar del contexto los tokens te redirige a la pantalla login
   const logout = async () => {
     await AsyncStorage.removeItem("authTokens");
     setAuthTokens(null);
   };
 
   return (
-    <AuthContext.Provider value={{ authTokens, logTokens, logout, loading }}>
+    <AuthContext.Provider
+      value={{
+        authTokens,
+        logTokens,
+        logout,
+        loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

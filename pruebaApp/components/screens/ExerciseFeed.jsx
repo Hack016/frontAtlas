@@ -16,9 +16,8 @@ import { Entypo } from "react-native-vector-icons";
 
 const LIMIT = 20; // Define cuantos ejs se cargan por página
 
-export default function TrainFeedScreen() {
+export default function ExerciseFeed() {
   const navigation = useNavigation();
-
   const fetchWithAuth = useFetchWithAuth();
 
   const [exercises, setExercises] = React.useState([]);
@@ -26,7 +25,18 @@ export default function TrainFeedScreen() {
   const [offset, setOffset] = React.useState(0);
   const [loadingMore, setLoadingMore] = React.useState(false);
   const [hasMore, setHasMore] = React.useState(true);
+  const [selectedExercises, setSelectedExercises] = React.useState([]);
 
+  const toggleSelectExercise = (item) => {
+    setSelectedExercises((prev) => {
+      const isSelected = prev.some((e) => e.idEjercicio === item.idEjercicio);
+      if (isSelected) {
+        return prev.filter((e) => e.idEjercicio !== item.idEjercicio);
+      } else {
+        return [...prev, item];
+      }
+    });
+  };
   const fetchExercises = async (initial = false) => {
     try {
       if (loadingMore || (!initial && !hasMore)) return;
@@ -80,15 +90,12 @@ export default function TrainFeedScreen() {
     { item } // Renderiza cada ejercicio, lo hago en función a parte para que el código esté más limpio
   ) => (
     <View style={styles.cardEnvelope}>
-      <Pressable
-        style={styles.card}
-        onPress={() =>
-          navigation.navigate("ExerciseDetail", {
-            idEjercicio: item.idEjercicio,
-            nombreEjercicio: item.nombre, // Le paso el nombre para que el titulo de la página sea el nombre del ejercicio
-          })
-        }
-      >
+      <Pressable style={styles.card} onPress={() => toggleSelectExercise(item)}>
+        {selectedExercises.some((e) => e.idEjercicio === item.idEjercicio) ? (
+          <Text style={styles.selectionBarActive}>|</Text>
+        ) : (
+          <Text style={styles.selectionBar}></Text>
+        )}
         <View style={styles.exercisecontainer}>
           {item.imagen && (
             <Image source={{ uri: item.imagen }} style={styles.image} />
@@ -100,7 +107,16 @@ export default function TrainFeedScreen() {
             </Text>
           </View>
         </View>
-        <Entypo name="chevron-right" size={24} />
+        <Pressable
+          onPress={() =>
+            navigation.navigate("ExerciseDetail", {
+              idEjercicio: item.idEjercicio,
+              nombreEjercicio: item.nombre, // Le paso el nombre para que el titulo de la página sea el nombre del ejercicio
+            })
+          }
+        >
+          <Entypo name="info-with-circle" size={24} />
+        </Pressable>
       </Pressable>
     </View>
   );
@@ -121,6 +137,26 @@ export default function TrainFeedScreen() {
         }
         contentContainerStyle={styles.scrollContainer}
       />
+      {selectedExercises.length > 0 && (
+        <View style={styles.footer}>
+          <Pressable
+            style={styles.addButton}
+            // onPress={() => {
+            //   const selectedNames = selectedExercises.map((e) => e.nombre);
+            //   navigation.navigate("SesionScreen", {
+            //     ejercicios: selectedNames,
+            //   });
+            //   setSelectedExercises([]); // Limpia la selección
+            // }}
+            onPress={() => console.log("Añadidos ns cuantos ejs")}
+          >
+            <Text style={styles.addButtonText}>
+              Añadir {selectedExercises.length} ejercicio
+              {selectedExercises.length > 1 ? "s" : ""}
+            </Text>
+          </Pressable>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -144,7 +180,7 @@ const styles = StyleSheet.create({
   exercisecontainer: {
     flexDirection: "row",
     alignItems: "center",
-    flex: 1, // Ocupa el espacio para empujar el ícono al final
+    flex: 1,
   },
   image: {
     width: 48,
@@ -166,5 +202,19 @@ const styles = StyleSheet.create({
   muscleGroup: {
     color: "#aaa",
     fontSize: 14,
+  },
+  selectionBar: {
+    width: 1,
+    height: "100%",
+    marginRight: 12,
+    backgroundColor: "transparent",
+    borderRadius: 2,
+  },
+  selectionBarActive: {
+    width: 4,
+    backgroundColor: "#007AFF",
+    height: "100%",
+    marginRight: 12,
+    borderRadius: 2,
   },
 });

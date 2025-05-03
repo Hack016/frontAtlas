@@ -16,7 +16,7 @@ export const AccountSettings = () => {
       <Pressable
         style={styles.card}
         onPress={() =>
-          navigation.navigate("changeUsername", { username: username })
+          navigation.navigate("Change Username", { username: username })
         }
       >
         <View style={styles.rowCard}>
@@ -27,7 +27,7 @@ export const AccountSettings = () => {
       </Pressable>
       <Pressable
         style={styles.card}
-        onPress={() => navigation.navigate("changeEmail", { email: email })}
+        onPress={() => navigation.navigate("Change Email", { email: email })}
       >
         <View style={styles.rowCard}>
           <Entypo name="lock" size={24} />

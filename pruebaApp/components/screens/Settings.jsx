@@ -26,7 +26,7 @@ export const Settings = () => {
       <Pressable
         style={styles.card}
         onPress={() =>
-          navigation.navigate("AccountSettings", {
+          navigation.navigate("Account Settings", {
             email: email,
             username: username,
           })

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   ScrollView,
@@ -7,8 +7,11 @@ import {
   Text,
   RefreshControl,
 } from "react-native";
+import { ResumeWorkoutAS } from "../ResumeWorkoutAS";
+import { WorkoutContext } from "../../context/WorkoutContext";
 
 export default function HomeFeedScreen() {
+  const { isWorkoutActive } = useContext(WorkoutContext);
   const [sessions, setSessions] = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -43,6 +46,7 @@ export default function HomeFeedScreen() {
           </View>
         ))}
       </ScrollView>
+      {isWorkoutActive && <ResumeWorkoutAS />}
     </SafeAreaView>
   );
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   FlatList,
@@ -15,6 +15,9 @@ import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../../context/config";
 import Icon from "react-native-vector-icons/Ionicons";
 import { getUserAvatar } from "../../utils/avatar";
+import { Entypo, FontAwesome6 } from "react-native-vector-icons";
+import { ResumeWorkoutAS } from "../ResumeWorkoutAS";
+import { WorkoutContext } from "../../context/WorkoutContext";
 
 const mockSessions = [
   //mock para simular la salida mientras no implemente crear sesiones
@@ -95,6 +98,7 @@ const mockSessions = [
 ];
 
 export default function ProfileFeedScreen() {
+  const { isWorkoutActive } = useContext(WorkoutContext);
   const navigation = useNavigation();
 
   const fetchWithAuth = useFetchWithAuth();
@@ -282,6 +286,55 @@ export default function ProfileFeedScreen() {
                 <Text style={styles.statLabel}>Following</Text>
               </View>
             </View>
+            <Text style={styles.sesionesTitulo}>Dashboard</Text>
+            <View style={styles.dashboardRow}>
+              <Pressable
+                style={styles.dashboardButton}
+                onPress={() => console.log("Statistics")}
+              >
+                <FontAwesome6
+                  style={styles.dashboardButtonIcon}
+                  name="chart-line"
+                  size={24}
+                />
+                <Text style={styles.dashboardButtonTitle}>Statistics</Text>
+              </Pressable>
+              <Pressable
+                style={styles.dashboardButton}
+                onPress={() => navigation.navigate("Exercises")}
+              >
+                <FontAwesome6
+                  style={styles.dashboardButtonIcon}
+                  name="dumbbell"
+                  size={24}
+                />
+                <Text style={styles.dashboardButtonTitle}>Exercises</Text>
+              </Pressable>
+            </View>
+            <View style={styles.dashboardRow}>
+              <Pressable
+                style={styles.dashboardButton}
+                onPress={() => console.log("Graphs")}
+              >
+                <Entypo
+                  style={styles.dashboardButtonIcon}
+                  name="bar-graph"
+                  size={24}
+                />
+                <Text style={styles.dashboardButtonTitle}>Graphs</Text>
+              </Pressable>
+              <Pressable
+                style={styles.dashboardButton}
+                onPress={() => console.log("Calendar")}
+              >
+                <Entypo
+                  style={styles.dashboardButtonIcon}
+                  name="calendar"
+                  size={24}
+                />
+                <Text style={styles.dashboardButtonTitle}>Calendar</Text>
+              </Pressable>
+            </View>
             <Text style={styles.sesionesTitulo}>Workouts</Text>
           </View>
         }
@@ -293,6 +346,7 @@ export default function ProfileFeedScreen() {
         }
         contentContainerStyle={{ paddingBottom: 20 }}
       />
+      {isWorkoutActive && <ResumeWorkoutAS />}
     </SafeAreaView>
   );
 }
@@ -362,6 +416,36 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 10,
   },
+  sesionesTitulo: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 10,
+    color: "grey",
+  },
+  dashboardRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  dashboardButton: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: "grey",
+    borderRadius: 12,
+    padding: 16,
+    marginHorizontal: 15,
+    marginBottom: 10,
+    marginTop: 5,
+  },
+  dashboardButtonTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "white",
+    alignContent: "center",
+  },
+  dashboardButtonIcon: {
+    marginRight: 10,
+    color: "white",
+  },
   sessionCard: {
     backgroundColor: "#f2f2f2",
     borderRadius: 12,
@@ -381,6 +465,7 @@ const styles = StyleSheet.create({
   sessionRow: {
     flexDirection: "row",
     marginVertical: 10,
+    paddingBottom: 10,
   },
   exerciseRow: {
     flexDirection: "row",
@@ -411,10 +496,5 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     fontSize: 14,
     color: "gray",
-  },
-  sesionesTitulo: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 10,
   },
 });
