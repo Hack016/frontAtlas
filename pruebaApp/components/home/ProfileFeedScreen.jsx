@@ -17,7 +17,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { getUserAvatar } from "../../utils/avatar";
 import { Entypo, FontAwesome6 } from "react-native-vector-icons";
 import { ResumeWorkoutAS } from "../ResumeWorkoutAS";
-import { WorkoutContext } from "../../context/WorkoutContext";
+import { WorkoutTimeContext } from "../../context/WorkoutTimeContext";
 
 const mockSessions = [
   //mock para simular la salida mientras no implemente crear sesiones
@@ -98,7 +98,7 @@ const mockSessions = [
 ];
 
 export default function ProfileFeedScreen() {
-  const { isWorkoutActive } = useContext(WorkoutContext);
+  const { isWorkoutActive } = useContext(WorkoutTimeContext);
   const navigation = useNavigation();
 
   const fetchWithAuth = useFetchWithAuth();
@@ -168,7 +168,7 @@ export default function ProfileFeedScreen() {
       <SafeAreaView
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       >
-        <ActivityIndicator color="white" size="small" />
+        <ActivityIndicator color="black" size="large" />
       </SafeAreaView>
     );
   }

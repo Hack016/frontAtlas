@@ -8,10 +8,10 @@ import {
   RefreshControl,
 } from "react-native";
 import { ResumeWorkoutAS } from "../ResumeWorkoutAS";
-import { WorkoutContext } from "../../context/WorkoutContext";
+import { WorkoutTimeContext } from "../../context/WorkoutTimeContext";
 
 export default function HomeFeedScreen() {
-  const { isWorkoutActive } = useContext(WorkoutContext);
+  const { isWorkoutActive } = useContext(WorkoutTimeContext);
   const [sessions, setSessions] = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
 

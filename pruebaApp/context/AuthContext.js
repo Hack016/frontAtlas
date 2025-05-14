@@ -1,9 +1,13 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { WorkoutTimeContext } from "./WorkoutTimeContext";
+import { WorkoutTrainContext } from "./WorkoutTrainContext";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const { resetWorkout } = useContext(WorkoutTrainContext);
+  const { resetWorkoutTime } = useContext(WorkoutTimeContext);
   const [authTokens, setAuthTokens] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -38,6 +42,8 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     await AsyncStorage.removeItem("authTokens");
     setAuthTokens(null);
+    resetWorkout(); //al salir de la cuenta borra el entrenamiento activo (de haberlo)
+    resetWorkoutTime();
   };
 
   return (

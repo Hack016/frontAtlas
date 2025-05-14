@@ -1,28 +1,14 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-export const WorkoutContext = createContext();
+export const WorkoutTrainContext = createContext();
 
-export const WorkoutProvider = ({ children }) => {
-  const [isWorkoutActive, setIsWorkoutActive] = useState(false);
-  const [seconds, setSeconds] = useState(0);
+export const WorkoutTrainProvider = ({ children }) => {
   const [volume, setVolume] = useState(0);
   const [sets, setSets] = useState(0);
   const [selectedExercises, setSelectedExercises] = useState([]);
   const [exercises, setExercises] = useState([]);
   const [exerciseProgress, setExerciseProgress] = useState({});
 
-  useEffect(() => {
-    let interval;
-    if (isWorkoutActive) {
-      interval = setInterval(() => {
-        setSeconds((prev) => prev + 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isWorkoutActive]);
-
   const resetWorkout = () => {
-    setIsWorkoutActive(false);
-    setSeconds(0);
     setVolume(0);
     setSets(0);
     setSelectedExercises([]);
@@ -31,11 +17,8 @@ export const WorkoutProvider = ({ children }) => {
   };
 
   return (
-    <WorkoutContext.Provider
+    <WorkoutTrainContext.Provider
       value={{
-        isWorkoutActive,
-        setIsWorkoutActive,
-        seconds,
         volume,
         sets,
         setSets,
@@ -50,6 +33,6 @@ export const WorkoutProvider = ({ children }) => {
       }}
     >
       {children}
-    </WorkoutContext.Provider>
+    </WorkoutTrainContext.Provider>
   );
 };

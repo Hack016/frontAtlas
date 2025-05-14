@@ -8,7 +8,11 @@ import { Settings } from "./components/screens/Settings";
 import { EditProfile } from "./components/screens/EditProfile";
 import { AuthContext } from "./context/AuthContext";
 import { useContext } from "react";
-import { ActivityIndicator } from "react-native-paper";
+import {
+  Provider as PaperProvider,
+  ActivityIndicator,
+} from "react-native-paper";
+
 import { View } from "react-native";
 import { StatusBar } from "react-native";
 // import { RegisterFunction } from "./components/prueba";
@@ -22,8 +26,11 @@ import { ChangeUsername } from "./components/screens/changeUsername";
 import { ChangeEmail } from "./components/screens/changeEmail";
 import TrainFeedScreen from "./components/home/TrainFeedScreen";
 import { WorkoutSession } from "./components/screens/WorkoutSession";
-import { WorkoutProvider } from "./context/WorkoutContext";
 import ExerciseFeed from "./components/screens/ExerciseFeed";
+import WorkoutPost from "./components/screens/WorkoutPost";
+import { WorkoutProvider } from "./context/WorkoutContext";
+import { WorkoutTimeProvider } from "./context/WorkoutTimeContext";
+import { WorkoutTrainProvider } from "./context/WorkoutTrainContext";
 
 const Stack = createNativeStackNavigator();
 
@@ -40,7 +47,7 @@ const AppContent = () => {
 
   return (
     <ActionSheetProvider>
-      <>
+      <PaperProvider>
         <StatusBar backgroundColor="white" barStyle="dark-content" />
         <NavigationContainer>
           <Stack.Navigator
@@ -79,6 +86,11 @@ const AppContent = () => {
                   component={WorkoutSession}
                 />
                 <Stack.Screen name="Exercise Feed" component={ExerciseFeed} />
+                <Stack.Screen
+                  name="WorkoutPost"
+                  component={WorkoutPost}
+                  options={{ headerTitle: "Finish workout" }}
+                />
               </>
             ) : (
               <>
@@ -97,16 +109,18 @@ const AppContent = () => {
             )}
           </Stack.Navigator>
         </NavigationContainer>
-      </>
+      </PaperProvider>
     </ActionSheetProvider>
   );
 };
 export default function App() {
   return (
-    <AuthProvider>
-      <WorkoutProvider>
-        <AppContent />
-      </WorkoutProvider>
-    </AuthProvider>
+    <WorkoutTimeProvider>
+      <WorkoutTrainProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </WorkoutTrainProvider>
+    </WorkoutTimeProvider>
   );
 }

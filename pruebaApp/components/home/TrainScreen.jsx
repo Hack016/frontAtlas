@@ -4,10 +4,10 @@ import { useNavigation } from "@react-navigation/native";
 import { useContext } from "react";
 import { ResumeWorkoutAS } from "../ResumeWorkoutAS";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { WorkoutContext } from "../../context/WorkoutContext";
+import { WorkoutTimeContext } from "../../context/WorkoutTimeContext";
 
 export default function TrainScreen() {
-  const { isWorkoutActive } = useContext(WorkoutContext);
+  const { isWorkoutActive } = useContext(WorkoutTimeContext);
   const navigation = useNavigation();
   return (
     <SafeAreaView style={{ flex: 1 }}>
