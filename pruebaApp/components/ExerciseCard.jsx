@@ -10,14 +10,12 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useContext } from "react";
 import { WorkoutTrainContext } from "../context/WorkoutTrainContext";
-import { useActionSheet } from "@expo/react-native-action-sheet";
 import Modal from "react-native-modal";
 import { useNavigation } from "@react-navigation/native";
 import { Entypo, Feather } from "@expo/vector-icons";
 
 export const ExerciseCard = ({ ejercicio }) => {
   const navigation = useNavigation();
-  const { showActionSheetWithOptions } = useActionSheet();
   const [isExerciseTypeVisible, setIsExerciseTypeVisible] = useState(false);
   const [setModalIndex, setSetModalIndex] = useState(null);
   const [isExerciseDotsVisible, setIsExerciseDotsVisible] = useState(false);

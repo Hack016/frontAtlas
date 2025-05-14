@@ -18,84 +18,7 @@ import { getUserAvatar } from "../../utils/avatar";
 import { Entypo, FontAwesome6 } from "react-native-vector-icons";
 import { ResumeWorkoutAS } from "../ResumeWorkoutAS";
 import { WorkoutTimeContext } from "../../context/WorkoutTimeContext";
-
-const mockSessions = [
-  //mock para simular la salida mientras no implemente crear sesiones
-  {
-    username: "admin",
-    profilePic: "",
-    sexo: "Male",
-    idSesion: 1,
-    nombre: "Rutina Full Body",
-    tiempo: 75,
-    fecha: "2025-04-19T14:30:00Z",
-    ejercicios: [
-      {
-        nombre: "Sentadillas",
-        imagen: "https://wger.de/media/exercise-images/192/Bench-press-1.png",
-      },
-      {
-        nombre: "Press banca",
-        imagen: "https://wger.de/media/exercise-images/192/Bench-press-1.png",
-      },
-      {
-        nombre: "Remo con barra",
-        imagen: "https://wger.de/media/exercise-images/192/Bench-press-1.png",
-      },
-    ],
-    volumen: 4278,
-    likes: 12,
-    comentarios: 3,
-  },
-  {
-    username: "admin",
-    profilePic: "",
-    sexo: "Male",
-    idSesion: 2,
-    nombre: "Pierna y Core",
-    tiempo: 50,
-    fecha: "2025-04-18T10:15:00Z",
-    ejercicios: [
-      {
-        nombre: "Peso muerto rumano",
-        imagen: "https://wger.de/media/exercise-images/192/Bench-press-1.png",
-      },
-      {
-        nombre: "Plancha",
-        imagen: "https://wger.de/media/exercise-images/192/Bench-press-1.png",
-      },
-    ],
-    volumen: 5002,
-    likes: 7,
-    comentarios: 1,
-  },
-  {
-    username: "admin",
-    profilePic: "",
-    sexo: "Male",
-    idSesion: 3,
-    nombre: "Push Day",
-    tiempo: 40,
-    fecha: "2025-04-16T18:00:00Z",
-    ejercicios: [
-      {
-        nombre: "Fondos",
-        imagen: "https://wger.de/media/exercise-images/192/Bench-press-1.png",
-      },
-      {
-        nombre: "Press militar",
-        imagen: "https://wger.de/media/exercise-images/192/Bench-press-1.png",
-      },
-      {
-        nombre: "Aperturas con mancuernas",
-        imagen: "https://wger.de/media/exercise-images/192/Bench-press-1.png",
-      },
-    ],
-    volumen: 3349,
-    likes: 25,
-    comentarios: 5,
-  },
-];
+import { SessionCard } from "../SessionCard";
 
 export default function ProfileFeedScreen() {
   const { isWorkoutActive } = useContext(WorkoutTimeContext);
@@ -132,22 +55,22 @@ export default function ProfileFeedScreen() {
 
   const fetchSessionsData = async () => {
     try {
-      // setRefreshing(true);
-      // console.log(BASE_URL);
-      // const response = await fetchWithAuth(`${BASE_URL}api/userSessions/`, {
-      //   method: "GET",
-      // });
+      setRefreshing(true);
+      console.log(BASE_URL);
+      const response = await fetchWithAuth(`${BASE_URL}api/userSessions/`, {
+        method: "GET",
+      });
 
-      // setRefreshing(false);
+      setRefreshing(false);
 
-      // const data = await response.json();
-      setSessionsData(mockSessions);
+      const data = await response.json();
+      setSessionsData(data.results);
 
-      // if (response.ok) {
-      //   return { success: true, data };
-      // } else {
-      //   return { success: false, error: data.error || "Server not available" };
-      // }
+      if (response.ok) {
+        return { success: true, data };
+      } else {
+        return { success: false, error: data.error || "Server not available" };
+      }
     } catch (error) {
       return { success: false, error };
     }
@@ -173,61 +96,7 @@ export default function ProfileFeedScreen() {
     );
   }
 
-  const renderSessionItem = ({ item }) => (
-    <View style={styles.sessionCard}>
-      {/* Nombre de usuario con fecha de la sesión y foto de perfil  */}
-      <View style={styles.userHeader}>
-        <Image source={getUserAvatar(item)} style={styles.image} />
-        <View>
-          <Text style={styles.userSession}>{item.username}</Text>
-          <Text style={styles.sessionDate}>
-            {new Date(item.fecha).toLocaleDateString()}
-          </Text>
-        </View>
-      </View>
-      {/* Información de la sesión */}
-      <Text style={styles.sessionTitle}>{item.nombre}</Text>
-
-      {item.tiempo > 60 ? (
-        <View style={styles.sessionRow}>
-          <Text style={[styles.sessionInfo, { marginRight: 20 }]}>
-            Time: {Math.floor(item.tiempo / 60)} h {item.tiempo % 60} min
-          </Text>
-          <Text style={styles.sessionInfo}>
-            Volume:
-            {item.volumen} kg
-          </Text>
-        </View>
-      ) : (
-        <View style={styles.sessionRow}>
-          <Text style={[styles.sessionInfo, { marginRight: 20 }]}>
-            Time: {item.tiempo} min
-          </Text>
-          <Text style={styles.sessionInfo}>
-            Volume:
-            {item.volumen} kg
-          </Text>
-        </View>
-      )}
-
-      {item.ejercicios.map((ej, index) => (
-        <View key={index} style={styles.exercisePreview}>
-          <View style={styles.exerciseRow}>
-            <Image source={{ uri: ej.imagen }} style={styles.image} />
-            <Text style={styles.exerciseName}>{ej.nombre}</Text>
-          </View>
-        </View>
-      ))}
-      <Text style={styles.loadMore}>Load more...</Text>
-
-      <View style={styles.sessionSocial}>
-        <Text style={styles.socialText}>
-          {item.likes} {item.likes === 1 ? "like" : "likes"} {item.comentarios}{" "}
-          {item.comentarios === 1 ? "comment" : "comments"}
-        </Text>
-      </View>
-    </View>
-  );
+  const renderSessionItem = ({ item }) => <SessionCard item={item} />;
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -372,15 +241,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
   },
-  userHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  userSession: {
-    fontWeight: "bold",
-    fontSize: 16,
-  },
   username: {
     fontSize: 16,
     color: "gray",
@@ -445,56 +305,5 @@ const styles = StyleSheet.create({
   dashboardButtonIcon: {
     marginRight: 10,
     color: "white",
-  },
-  sessionCard: {
-    backgroundColor: "#f2f2f2",
-    borderRadius: 12,
-    padding: 16,
-    marginHorizontal: 20,
-    marginBottom: 15,
-  },
-  sessionTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
-  sessionInfo: {
-    fontSize: 14,
-    color: "gray",
-  },
-  sessionRow: {
-    flexDirection: "row",
-    marginVertical: 10,
-    paddingBottom: 10,
-  },
-  exerciseRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  exerciseName: {
-    fontSize: 14,
-    alignContent: "center",
-  },
-  image: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    marginRight: 12,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#333",
-  },
-  sessionSocial: {
-    marginTop: 10,
-  },
-  socialText: {
-    fontSize: 14,
-    color: "gray",
-  },
-  loadMore: {
-    paddingTop: 10,
-    fontSize: 14,
-    color: "gray",
   },
 });

@@ -15,8 +15,6 @@ import {
 
 import { View } from "react-native";
 import { StatusBar } from "react-native";
-// import { RegisterFunction } from "./components/prueba";
-
 import { Home } from "./components/Home";
 import ExerciseDetail from "./components/screens/ExerciseDetail";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
@@ -24,11 +22,10 @@ import { OptionalInfo } from "./components/optionalInfo";
 import { AccountSettings } from "./components/screens/AccountSettings";
 import { ChangeUsername } from "./components/screens/changeUsername";
 import { ChangeEmail } from "./components/screens/changeEmail";
-import TrainFeedScreen from "./components/home/TrainFeedScreen";
+import TrainFeedScreen from "./components/screens/TrainFeedScreen";
 import { WorkoutSession } from "./components/screens/WorkoutSession";
 import ExerciseFeed from "./components/screens/ExerciseFeed";
 import WorkoutPost from "./components/screens/WorkoutPost";
-import { WorkoutProvider } from "./context/WorkoutContext";
 import { WorkoutTimeProvider } from "./context/WorkoutTimeContext";
 import { WorkoutTrainProvider } from "./context/WorkoutTrainContext";
 

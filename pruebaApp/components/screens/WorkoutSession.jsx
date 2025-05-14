@@ -4,19 +4,16 @@ import { useContext, useState } from "react";
 import { WorkoutTimeContext } from "../../context/WorkoutTimeContext";
 import { WorkoutTrainContext } from "../../context/WorkoutTrainContext";
 import { useNavigation } from "@react-navigation/native";
-import { useRoute } from "@react-navigation/native";
 import { useFetchWithAuth } from "../../utils/fetchWithAuth";
 import { BASE_URL } from "../../context/config";
 import { ExerciseCard } from "../ExerciseCard";
 import { Entypo, FontAwesome6 } from "@expo/vector-icons";
 import { WorkoutAlert } from "../../utils/workoutAlert";
-import { FinishButton } from "../../utils/FinishButton";
 
 export const WorkoutSession = () => {
   const [showAlert, setShowAlert] = useState(false);
   const navigation = useNavigation();
   const fetchWithAuth = useFetchWithAuth();
-  const route = useRoute();
   const {
     volume,
     sets,
