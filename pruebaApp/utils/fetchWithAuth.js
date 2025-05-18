@@ -1,41 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
-import { atob } from "atob";
 import { BASE_URL } from "../context/config";
 
 export const useFetchWithAuth = () => {
   const { authTokens, logTokens, logout } = useContext(AuthContext);
 
-  function decodeJwt(token) {
-    try {
-      const base64Payload = token.split(".")[1];
-      const payload = atob(base64Payload.replace(/-/g, "+").replace(/_/g, "/")); //Decodifica el token de base64 para luego obtener el campo de expiración
-      return JSON.parse(payload);
-    } catch (e) {
-      return null;
-    }
-  }
-
   const fetchWithAuth = async (url, options = {}) => {
     let accessToken = authTokens?.access;
-    const decoded = decodeJwt(accessToken);
 
-    if (decoded?.exp) {
-      const now = Math.floor(Date.now() / 1000);
-      const secondsLeft = decoded.exp - now;
-
-      if (secondsLeft < 30) {
-        let newTokens = await refreshToken();
-        if (newTokens) {
-          accessToken = newTokens.access;
-        } else {
-          console.log("Token unavailable");
-          await logout();
-          throw new Error("Token invalid or expired");
-        }
-      }
-    }
     const isFormData = options.body instanceof FormData; //Ver si se manda FormData en la petición
 
     let headers = {

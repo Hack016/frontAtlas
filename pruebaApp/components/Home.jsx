@@ -12,7 +12,7 @@ export function Home() {
     <View style={{ flex: 1 }}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
-          headerShown: false,
+          // headerShown: false,
           tabBarIcon: ({ focused, color, size }) => {
             if (route.name === "Train") {
               return <FontAwesome6 name="dumbbell" size={size} color={color} />;
@@ -41,10 +41,18 @@ export function Home() {
         <Tab.Screen
           name="HomeFeed"
           component={HomeFeedScreen}
-          options={{ tabBarLabel: "Home" }}
+          options={{ tabBarLabel: "Home", headerTitle: "" }}
         />
-        <Tab.Screen name="Train" component={TrainScreen} />
-        <Tab.Screen name="Profile" component={ProfileFeedScreen} />
+        <Tab.Screen
+          name="Train"
+          component={TrainScreen}
+          options={{ headerTitleAlign: "center", headerTitle: "Workout" }}
+        />
+        <Tab.Screen
+          name="Profile"
+          component={ProfileFeedScreen}
+          options={{ headerTitleAlign: "center" }}
+        />
       </Tab.Navigator>
     </View>
   );

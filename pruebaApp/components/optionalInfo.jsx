@@ -72,11 +72,6 @@ export const OptionalInfo = () => {
 
       if (response.ok) {
         await logTokens(tokens);
-
-        // navigation.reset({ //NO hace falta porque el logTokens ya nos redirige
-        //   index: 0,
-        //   routes: [{ name: "Home" }],
-        // });
       } else {
         const errorData = await response.json();
         alert(errorData.error || "Error saving profile.");

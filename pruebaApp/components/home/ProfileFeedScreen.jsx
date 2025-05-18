@@ -13,7 +13,7 @@ import {
 import { useFetchWithAuth } from "../../utils/fetchWithAuth";
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../../context/config";
-import Icon from "react-native-vector-icons/Ionicons";
+import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { getUserAvatar } from "../../utils/avatar";
 import { Entypo, FontAwesome6 } from "react-native-vector-icons";
 import { ResumeWorkoutAS } from "../ResumeWorkoutAS";
@@ -33,7 +33,6 @@ export default function ProfileFeedScreen() {
   const fetchProfileData = async () => {
     try {
       setRefreshing(true);
-      console.log(BASE_URL);
       const response = await fetchWithAuth(`${BASE_URL}api/profile/`, {
         method: "GET",
       });
@@ -86,6 +85,38 @@ export default function ProfileFeedScreen() {
     onRefresh();
   }, []);
 
+  React.useLayoutEffect(() => {
+    if (!profileData) {
+      // si no hay datos de perfil aún, no cargar el botón de ajustes porque falla al intentar acceder a la info de profileData
+      return;
+    }
+    navigation.setOptions({
+      headerLargeTitle: true,
+      headerTitle: profileData.usuario.username,
+      headerRight: () => (
+        <>
+          <Pressable
+            onPress={() => navigation.navigate("Follow Requests")}
+            style={styles.followButton}
+          >
+            <MaterialCommunityIcons name="account-plus-outline" size={24} />
+          </Pressable>
+          <Pressable
+            onPress={() =>
+              navigation.navigate("Settings", {
+                email: profileData.usuario.email,
+                username: profileData.usuario.username,
+              })
+            }
+            style={styles.settingsButton}
+          >
+            <Ionicons name="settings-outline" size={24} />
+          </Pressable>
+        </>
+      ),
+    });
+  }, [navigation, profileData]);
+
   if (!profileData) {
     return (
       <SafeAreaView
@@ -107,17 +138,6 @@ export default function ProfileFeedScreen() {
               source={getUserAvatar(profileData.usuario)}
               style={styles.profileImage}
             />
-            <Pressable
-              onPress={() =>
-                navigation.navigate("Settings", {
-                  email: profileData.usuario.email,
-                  username: profileData.usuario.username,
-                })
-              }
-              style={styles.settingsButton}
-            >
-              <Icon name="settings-outline" size={24} />
-            </Pressable>
 
             <Text style={styles.name}>
               {profileData.usuario?.nombre
@@ -142,18 +162,24 @@ export default function ProfileFeedScreen() {
                 </Text>
                 <Text style={styles.statLabel}>Workouts</Text>
               </View>
-              <View style={styles.statBox}>
+              <Pressable
+                style={styles.statBox}
+                onPress={() => navigation.navigate("Followers")}
+              >
                 <Text style={styles.statNumber}>
                   {profileData.estadisticas.total_seguidores}
                 </Text>
                 <Text style={styles.statLabel}>Followers</Text>
-              </View>
-              <View style={styles.statBox}>
+              </Pressable>
+              <Pressable
+                style={styles.statBox}
+                onPress={() => navigation.navigate("Followed")}
+              >
                 <Text style={styles.statNumber}>
                   {profileData.estadisticas.total_seguidos}
                 </Text>
                 <Text style={styles.statLabel}>Following</Text>
-              </View>
+              </Pressable>
             </View>
             <Text style={styles.sesionesTitulo}>Dashboard</Text>
             <View style={styles.dashboardRow}>
@@ -235,6 +261,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 20,
     right: 20,
+    zIndex: 10,
+  },
+  followButton: {
+    position: "absolute",
+    top: 22,
+    right: 60,
     zIndex: 10,
   },
   name: {

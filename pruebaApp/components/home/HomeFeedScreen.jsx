@@ -1,17 +1,20 @@
-import React, { useContext } from "react";
+import React, { useContext, useLayoutEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FlatList, StyleSheet, RefreshControl } from "react-native";
+import { FlatList, StyleSheet, RefreshControl, Pressable } from "react-native";
 import { ResumeWorkoutAS } from "../ResumeWorkoutAS";
 import { WorkoutTimeContext } from "../../context/WorkoutTimeContext";
 import { useFetchWithAuth } from "../../utils/fetchWithAuth";
 import { BASE_URL } from "../../context/config";
 import { SessionCard } from "../SessionCard";
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function HomeFeedScreen() {
   const fetchWithAuth = useFetchWithAuth();
   const { isWorkoutActive } = useContext(WorkoutTimeContext);
   const [sessionsData, setSessionsData] = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
+  const navigation = useNavigation();
 
   const fetchSessionsData = async () => {
     try {
@@ -37,9 +40,23 @@ export default function HomeFeedScreen() {
   };
   const onRefresh = async () => {
     setRefreshing(true);
-    await Promise.all(fetchSessionsData());
+    await fetchSessionsData();
     setRefreshing(false);
   };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLargeTitle: true,
+      headerRight: () => (
+        <Pressable
+          onPress={() => navigation.navigate("SearchUsers")}
+          style={{ marginRight: 15 }}
+        >
+          <Ionicons name="search" size={24} color="black" />
+        </Pressable>
+      ),
+    });
+  }, []);
 
   React.useEffect(() => {
     onRefresh();

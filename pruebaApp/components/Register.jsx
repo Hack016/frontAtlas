@@ -93,7 +93,6 @@ export const RegisterFunction = ({ navigation }) => {
     if (result.success) {
       // Guardar tokens en AsyncStorage, NO guardarlos aquí porque sino nos redirige directamente a Home y queremos que muestre una pantalla antes
       const tokens = result.tokens;
-      // await logTokens(tokens);
       navigation.reset({
         index: 0,
         routes: [

@@ -28,6 +28,10 @@ import ExerciseFeed from "./components/screens/ExerciseFeed";
 import WorkoutPost from "./components/screens/WorkoutPost";
 import { WorkoutTimeProvider } from "./context/WorkoutTimeContext";
 import { WorkoutTrainProvider } from "./context/WorkoutTrainContext";
+import SearchUsers from "./components/screens/SearchUsers";
+import FollowRequests from "./components/screens/FollowRequests";
+import Followers from "./components/screens/Followers";
+import Followed from "./components/screens/Followed";
 
 const Stack = createNativeStackNavigator();
 
@@ -57,7 +61,7 @@ const AppContent = () => {
                 <Stack.Screen
                   name="Home"
                   component={Home}
-                  options={{ headerShown: false }}
+                  options={{ headerShown: false }} //No quiero que se muestre Home pero si en sus derivadas
                 />
                 <Stack.Screen
                   name="ExerciseDetail"
@@ -66,6 +70,16 @@ const AppContent = () => {
                     title: route.params.nombreEjercicio || "Ejercicio",
                   })}
                 />
+                <Stack.Screen
+                  name="Follow Requests"
+                  component={FollowRequests}
+                />
+                <Stack.Screen
+                  name="Followed"
+                  component={Followed}
+                  options={{ headerTitle: "Following" }}
+                />
+                <Stack.Screen name="Followers" component={Followers} />
                 <Stack.Screen name="Settings" component={Settings} />
                 <Stack.Screen name="EditProfile" component={EditProfile} />
                 <Stack.Screen
@@ -83,6 +97,7 @@ const AppContent = () => {
                   component={WorkoutSession}
                 />
                 <Stack.Screen name="Exercise Feed" component={ExerciseFeed} />
+                <Stack.Screen name="SearchUsers" component={SearchUsers} />
                 <Stack.Screen
                   name="WorkoutPost"
                   component={WorkoutPost}

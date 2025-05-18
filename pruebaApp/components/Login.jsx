@@ -63,10 +63,6 @@ export const LoginFunction = ({ navigation }) => {
       // Guardar tokens en AsyncStorage
       const tokens = result.tokens;
       await logTokens(tokens);
-      // navigation.reset({  //NO hace falta porque el logTokens ya me redirige
-      //   index: 0,
-      //   routes: [{ name: "Home" }],
-      // });
     } else {
       if (result.error === "Credenciales incorrectas") {
         seterrorgeneral("Login failed: Incorrect email or password");

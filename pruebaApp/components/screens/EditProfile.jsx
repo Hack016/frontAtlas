@@ -64,8 +64,8 @@ export const EditProfile = () => {
       setNuevaBio(profileData.biografia || "");
       setNuevoSexo(profileData.sexo || "Male");
       setNuevaFecha(
-        profileData.fecha_nacimiento
-          ? new Date(profileData.fecha_nacimiento)
+        profileData.ano_nacimiento
+          ? new Date(profileData.ano_nacimiento)
           : new Date()
       );
       setNuevaFoto(profileData.foto_perfil || "");
@@ -101,7 +101,7 @@ export const EditProfile = () => {
       hasChanges = true;
     }
 
-    const fechaOriginal = new Date(profileData.fecha_nacimiento).toDateString();
+    const fechaOriginal = new Date(profileData.ano_nacimiento).toDateString();
     const fechaNueva = nuevaFecha?.toDateString();
     if (fechaNueva !== fechaOriginal) {
       formData.append("ano_nacimiento", nuevaFecha.toISOString().split("T")[0]);
@@ -140,7 +140,8 @@ export const EditProfile = () => {
 
     // Si se eliminó la foto
     if (!nuevaFoto && profileData.foto_perfil) {
-      formData.append("foto_perfil", ""); // Borraría la imagen también en el backend
+      // formData.append("foto_perfil", ""); // Borraría la imagen también en el backend
+      formData.append("eliminar_foto", "true"); // Enviaría un parámetro para que el backend elimine la imagen
       hasChanges = true;
     }
 

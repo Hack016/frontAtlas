@@ -6,7 +6,6 @@ import {
   View,
   Pressable,
   ActivityIndicator,
-  Dimensions,
   Alert,
 } from "react-native";
 import { TextInput } from "react-native-paper";
@@ -16,8 +15,6 @@ import { BASE_URL } from "../../context/config";
 import { useFetchWithAuth } from "../../utils/fetchWithAuth";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
-
-const { width } = Dimensions.get("window");
 
 export const ChangeUsername = () => {
   const navigation = useNavigation();
