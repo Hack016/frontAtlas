@@ -28,6 +28,7 @@ export default function ExerciseFeed() {
   const [loadingMore, setLoadingMore] = React.useState(false);
   const [hasMore, setHasMore] = React.useState(true);
   const [selectedExercises, setSelectedExercises] = React.useState([]);
+  const [initialLoadDone, setInitialLoadDone] = React.useState(false); //Bloquear onEndReached hasta que se carguen los datos iniciales
 
   const toggleSelectExercise = (item) => {
     setSelectedExercises((prev) => {
@@ -48,6 +49,7 @@ export default function ExerciseFeed() {
         setHasMore(true);
         setRefreshing(true);
       } else {
+        if (!initialLoadDone) return;
         setLoadingMore(true);
       }
 
@@ -60,6 +62,7 @@ export default function ExerciseFeed() {
       if (response.ok) {
         if (initial) {
           setExercises(data.results);
+          setInitialLoadDone(true);
         } else {
           // setExercises((prev) => [...prev, ...data.results]);
           setExercises((prev) => {

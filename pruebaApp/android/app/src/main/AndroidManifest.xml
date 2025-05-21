@@ -15,6 +15,7 @@
     <meta-data android:name="expo.modules.updates.ENABLED" android:value="false"/>
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_CHECK_ON_LAUNCH" android:value="ALWAYS"/>
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_LAUNCH_WAIT_MS" android:value="0"/>
+    <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_fBwgkRNXfWxA3ETtM8MtwppoFqf2JO8T" />
     <activity android:name=".MainActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|uiMode" android:launchMode="singleTask" android:windowSoftInputMode="adjustResize" android:theme="@style/Theme.App.SplashScreen" android:exported="true" android:screenOrientation="portrait">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -26,6 +27,21 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="com.hack0.pruebaApp"/>
         <data android:scheme="exp+pruebaapp"/>
+      </intent-filter>
+      <!-- Universal Link para Branch -->
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="https" android:host="atlastracker.app.link" />
+      </intent-filter>
+
+      <!-- Esquema personalizado opcional -->
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="atlastracker" android:host="post" />
       </intent-filter>
     </activity>
   </application>

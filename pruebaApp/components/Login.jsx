@@ -5,12 +5,14 @@ import {
   Dimensions,
   Pressable,
   Text,
+  View,
 } from "react-native";
 import React, { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { TextInput, ActivityIndicator } from "react-native-paper";
 import { signInWithCredentials } from "../components/Signin";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 
@@ -93,23 +95,33 @@ export const LoginFunction = ({ navigation }) => {
         {errorpassword !== "" && (
           <Text style={styles.error}>{errorpassword}</Text>
         )}
-        <TextInput
-          style={styles.input}
-          label="Password"
-          onChangeText={setPassword}
-          value={password}
-          secureTextEntry={!showPassword}
-          mode="outlined"
-          outlineColor="#007BFF"
-          activeOutlineColor="#007BFF"
-          activeUnderlineColor="#007BFF"
-          right={
-            <TextInput.Icon
-              icon={showPassword ? "eye-off" : "eye"}
-              onPress={() => setShowPassword(!showPassword)}
-            />
-          }
-        />
+        <View style={styles.passwordInputContainer}>
+          <TextInput
+            style={styles.input}
+            label="Password"
+            onChangeText={setPassword}
+            value={password}
+            secureTextEntry={!showPassword}
+            mode="outlined"
+            outlineColor="#007BFF"
+            activeOutlineColor="#007BFF"
+            activeUnderlineColor="#007BFF"
+            // right={
+            //   <TextInput.Icon
+            //     icon={showPassword ? "eye-off" : "eye"}
+            //     onPress={() => setShowPassword(!showPassword)}
+            //   />
+            // }
+          />
+          <Ionicons
+            name={showPassword ? "eye-off" : "eye"}
+            size={24}
+            color="gray"
+            style={styles.eyeIcon}
+            onPress={() => setShowPassword(!showPassword)}
+          />
+        </View>
+
         <Pressable
           style={({ pressed }) =>
             pressed ? { ...styles.button, opacity: 0.5 } : styles.button
@@ -174,5 +186,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     textAlign: "center",
+  },
+  passwordInputContainer: {
+    width: "80%",
+    position: "relative",
+    marginBottom: 12,
+  },
+  eyeIcon: {
+    position: "absolute",
+    right: 20,
+    top: 30,
+    zIndex: 1,
   },
 });

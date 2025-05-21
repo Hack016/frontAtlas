@@ -30,6 +30,8 @@
       "eas": {
         "projectId": "e778c401-4a0f-4fc8-b32d-e09bad007a33"
       }
-    }
+    },
+    "scheme": "atlastracker",
+    "plugins": []
   }
 }

@@ -12,12 +12,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { BASE_URL } from "../../context/config";
-import { useFetchWithAuth } from "../../utils/fetchWithAuth";
+import { BASE_URL } from "../../../context/config";
+import { useFetchWithAuth } from "../../../utils/fetchWithAuth";
 import { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
-import { getUserAvatar } from "../../utils/avatar";
-import { AuthContext } from "../../context/AuthContext";
+import { getUserAvatar } from "../../../utils/avatar";
+import { AuthContext } from "../../../context/AuthContext";
+import { UnfollowAlert } from "../../../utils/UnfollowAlert";
 const LIMIT = 20;
 
 export default function SearchUsers() {
@@ -31,6 +32,7 @@ export default function SearchUsers() {
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   React.useEffect(() => {
     const timeout = setTimeout(() => {
@@ -166,7 +168,18 @@ export default function SearchUsers() {
     }
   };
   const renderItem = ({ item }) => (
-    <View style={styles.userRow}>
+    <Pressable
+      style={styles.userRow}
+      onPress={() => {
+        if (item.username === authTokens.username)
+          navigation.navigate("Profile", { showHeaderButtons: false });
+        else
+          navigation.navigate("VisitProfile", {
+            username: item.username,
+            follow_status: item.follow_status,
+          });
+      }}
+    >
       <Image source={getUserAvatar(item)} style={styles.imageUser} />
       <View style={styles.userInfo}>
         <Text style={styles.username}>{item.username}</Text>
@@ -175,7 +188,7 @@ export default function SearchUsers() {
       {item.username === authTokens.username ? null : item.follow_status ===
         "following" ? (
         <Pressable
-          onPress={() => handleUnFollow(item.username)}
+          onPress={() => setSelectedUser(item)}
           style={styles.followButton}
         >
           <Text style={styles.followButtonText}>UnFollow</Text>
@@ -195,11 +208,20 @@ export default function SearchUsers() {
           <Text style={styles.followButtonText}>Follow</Text>
         </Pressable>
       )}
-    </View>
+    </Pressable>
   );
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <UnfollowAlert
+        visible={selectedUser !== null}
+        onCancel={() => setSelectedUser(null)}
+        onDiscard={() => {
+          handleUnFollow(selectedUser.username);
+          setSelectedUser(null);
+        }}
+        username={selectedUser?.username}
+      />
       <View style={styles.container}>
         {loading ? (
           <ActivityIndicator size="small" />

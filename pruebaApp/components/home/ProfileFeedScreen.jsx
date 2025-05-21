@@ -11,7 +11,7 @@ import {
   Pressable,
 } from "react-native";
 import { useFetchWithAuth } from "../../utils/fetchWithAuth";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { BASE_URL } from "../../context/config";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { getUserAvatar } from "../../utils/avatar";
@@ -19,16 +19,21 @@ import { Entypo, FontAwesome6 } from "react-native-vector-icons";
 import { ResumeWorkoutAS } from "../ResumeWorkoutAS";
 import { WorkoutTimeContext } from "../../context/WorkoutTimeContext";
 import { SessionCard } from "../SessionCard";
+const LIMIT = 5;
 
 export default function ProfileFeedScreen() {
   const { isWorkoutActive } = useContext(WorkoutTimeContext);
   const navigation = useNavigation();
-
   const fetchWithAuth = useFetchWithAuth();
-
+  const route = useRoute();
+  const showHeaderButtons = route.params?.showHeaderButtons !== false;
   const [profileData, setProfileData] = React.useState(null);
   const [sessionsData, setSessionsData] = React.useState(null);
   const [refreshing, setRefreshing] = React.useState(false);
+  const [offset, setOffset] = React.useState(0);
+  const [hasMore, setHasMore] = React.useState(true);
+  const [loadingMore, setLoadingMore] = React.useState(false);
+  const [initialLoadDone, setInitialLoadDone] = React.useState(false); //Bloquear onEndReached hasta que se carguen los datos iniciales
 
   const fetchProfileData = async () => {
     try {
@@ -52,32 +57,57 @@ export default function ProfileFeedScreen() {
     }
   };
 
-  const fetchSessionsData = async () => {
-    try {
-      setRefreshing(true);
-      console.log(BASE_URL);
-      const response = await fetchWithAuth(`${BASE_URL}api/userSessions/`, {
-        method: "GET",
-      });
+  const fetchSessionsData = async (initial = false) => {
+    if (loadingMore || (!initial && !hasMore)) return;
 
-      setRefreshing(false);
+    if (initial) {
+      setRefreshing(true);
+      setOffset(0);
+      setHasMore(true);
+    } else {
+      if (!initialLoadDone) return;
+      setLoadingMore(true);
+    }
+    try {
+      const response = await fetchWithAuth(
+        `${BASE_URL}api/userSessions/?limit=${LIMIT}&offset=${initial ? 0 : offset}`,
+        {
+          method: "GET",
+        }
+      );
 
       const data = await response.json();
-      setSessionsData(data.results);
 
       if (response.ok) {
-        return { success: true, data };
+        if (initial) {
+          setSessionsData(data.results);
+          setInitialLoadDone(true);
+        } else {
+          // evitar mostrar usuarios duplicados
+          setSessionsData((prev) => {
+            const existingIds = new Set(prev.map((s) => s.idSesion));
+            const deduplicated = data.results.filter(
+              (item) => !existingIds.has(item.idSesion)
+            );
+            return [...prev, ...deduplicated];
+          });
+        }
+        setOffset((prev) => prev + LIMIT);
+        if (data.results.length < LIMIT) setHasMore(false);
       } else {
         return { success: false, error: data.error || "Server not available" };
       }
     } catch (error) {
       return { success: false, error };
+    } finally {
+      setLoadingMore(false);
+      setRefreshing(false);
     }
   };
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await Promise.all([fetchProfileData(), fetchSessionsData()]);
+    await Promise.all([fetchProfileData(), fetchSessionsData(true)]);
     setRefreshing(false);
   };
 
@@ -90,11 +120,18 @@ export default function ProfileFeedScreen() {
       // si no hay datos de perfil aún, no cargar el botón de ajustes porque falla al intentar acceder a la info de profileData
       return;
     }
+    if (showHeaderButtons === false) {
+      navigation.setOptions({
+        headerLargeTitle: true,
+        headerTitle: profileData.usuario.username,
+      });
+      return;
+    }
     navigation.setOptions({
       headerLargeTitle: true,
       headerTitle: profileData.usuario.username,
       headerRight: () => (
-        <>
+        <View style={styles.headerButtons}>
           <Pressable
             onPress={() => navigation.navigate("Follow Requests")}
             style={styles.followButton}
@@ -112,7 +149,7 @@ export default function ProfileFeedScreen() {
           >
             <Ionicons name="settings-outline" size={24} />
           </Pressable>
-        </>
+        </View>
       ),
     });
   }, [navigation, profileData]);
@@ -236,10 +273,27 @@ export default function ProfileFeedScreen() {
         data={sessionsData}
         renderItem={renderSessionItem}
         keyExtractor={(item) => item.idSesion.toString()}
+        onEndReached={() => fetchSessionsData(false)}
+        onEndReachedThreshold={0.5}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
+        ListEmptyComponent={
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <FontAwesome6 name="dumbbell" size={90} color={"gray"} />
+            <Text style={styles.nullMessage}>
+              The world won't carry itself. Tap below in Train to begin your
+              first session.
+            </Text>
+          </View>
+        }
       />
       {isWorkoutActive && <ResumeWorkoutAS />}
     </SafeAreaView>
@@ -247,6 +301,10 @@ export default function ProfileFeedScreen() {
 }
 
 const styles = StyleSheet.create({
+  headerButtons: {
+    flexDirection: "row",
+    marginBottom: 40,
+  },
   headerContainer: {
     alignItems: "center",
     paddingVertical: 20,
@@ -258,16 +316,12 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   settingsButton: {
-    position: "absolute",
     top: 20,
     right: 20,
-    zIndex: 10,
   },
   followButton: {
-    position: "absolute",
     top: 22,
     right: 60,
-    zIndex: 10,
   },
   name: {
     fontSize: 22,
@@ -337,5 +391,12 @@ const styles = StyleSheet.create({
   dashboardButtonIcon: {
     marginRight: 10,
     color: "white",
+  },
+  nullMessage: {
+    width: "80%",
+    textAlign: "center",
+    fontSize: 14,
+    marginTop: 10,
+    color: "grey",
   },
 });

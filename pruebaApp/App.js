@@ -28,15 +28,48 @@ import ExerciseFeed from "./components/screens/ExerciseFeed";
 import WorkoutPost from "./components/screens/WorkoutPost";
 import { WorkoutTimeProvider } from "./context/WorkoutTimeContext";
 import { WorkoutTrainProvider } from "./context/WorkoutTrainContext";
-import SearchUsers from "./components/screens/SearchUsers";
+import SearchUsers from "./components/screens/socialNetwork/SearchUsers";
 import FollowRequests from "./components/screens/FollowRequests";
-import Followers from "./components/screens/Followers";
-import Followed from "./components/screens/Followed";
+import Followers from "./components/screens/socialNetwork/Followers";
+import Followed from "./components/screens/socialNetwork/Followed";
+import VisitProfile from "./components/screens/socialNetwork/VisitProfile";
+import ProfileFeedScreen from "./components/home/ProfileFeedScreen";
+import VisitFollowers from "./components/screens/socialNetwork/VisitFollowers";
+import VisitFollowed from "./components/screens/socialNetwork/VisitFollowed";
+import CommentSection from "./components/screens/socialNetwork/CommentPage";
+import Likes from "./components/screens/socialNetwork/Likes";
+// import branch from "react-native-branch";
+import { useEffect } from "react";
 
 const Stack = createNativeStackNavigator();
 
 const AppContent = () => {
   const { authTokens, loading } = useContext(AuthContext);
+
+  // useEffect(() => {
+  //   branch.subscribe(({ error, params }) => {
+  //     if (error) {
+  //       console.error("Branch error:", error);
+  //       return;
+  //     }
+
+  //     if (params && params["+clicked_branch_link"]) {
+  //       const idEjercicio = params.idEjercicio;
+  //       if (idEjercicio) {
+  //         // navegar a la pantalla de detalle
+  //       }
+  //     }
+  //   });
+  // }, []);
+  const linking = {
+    prefixes: ["https://atlastracker.app.link", "atlastracker://"],
+    config: {
+      screens: {
+        ExerciseDetail: "exerciseDetail/:idEjercicio",
+        Post: "post/:postId", // Ajusta si usas otro nombre de screen
+      },
+    },
+  };
 
   if (loading) {
     return (
@@ -79,6 +112,20 @@ const AppContent = () => {
                   component={Followed}
                   options={{ headerTitle: "Following" }}
                 />
+                <Stack.Screen name="VisitProfile" component={VisitProfile} />
+                <Stack.Screen
+                  name="VisitFollowers"
+                  component={VisitFollowers}
+                  options={{ headerTitle: "Followers" }}
+                />
+                <Stack.Screen
+                  name="VisitFollowed"
+                  component={VisitFollowed}
+                  options={{ headerTitle: "Following" }}
+                />
+                <Stack.Screen name="Comments" component={CommentSection} />
+                <Stack.Screen name="Likes" component={Likes} />
+                <Stack.Screen name="Profile" component={ProfileFeedScreen} />
                 <Stack.Screen name="Followers" component={Followers} />
                 <Stack.Screen name="Settings" component={Settings} />
                 <Stack.Screen name="EditProfile" component={EditProfile} />

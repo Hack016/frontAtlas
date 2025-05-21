@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   View,
   StyleSheet,
@@ -11,21 +11,27 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { BASE_URL } from "../../context/config";
-import { useFetchWithAuth } from "../../utils/fetchWithAuth";
+import { BASE_URL } from "../../../context/config";
+import { useFetchWithAuth } from "../../../utils/fetchWithAuth";
 import { useState } from "react";
-import { getUserAvatar } from "../../utils/avatar";
+import { getUserAvatar } from "../../../utils/avatar";
 import { Ionicons, Entypo } from "@expo/vector-icons";
+import { AuthContext } from "../../../context/AuthContext";
+import { UnfollowAlert } from "../../../utils/UnfollowAlert";
+import { KickOutAlert } from "../../../utils/KickOutAlert";
 const LIMIT = 20;
 
-export default function Followed() {
+export default function Followers() {
   const navigation = useNavigation();
+  const { authTokens } = useContext(AuthContext);
   const [results, setResults] = useState([]);
   const fetchWithAuth = useFetchWithAuth();
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [deleteUser, setdeleteUser] = useState(null);
 
   React.useEffect(() => {
     searchUsers(true);
@@ -44,7 +50,7 @@ export default function Followed() {
 
     try {
       const response = await fetchWithAuth(
-        `${BASE_URL}api/getUsersFollowed/?limit=${LIMIT}&offset=${initial ? 0 : offset}`,
+        `${BASE_URL}api/getFollowers/?limit=${LIMIT}&offset=${initial ? 0 : offset}`,
         { method: "GET" }
       );
 
@@ -74,6 +80,32 @@ export default function Followed() {
     }
   };
 
+  const handleFollow = async (username) => {
+    try {
+      const response = await fetchWithAuth(
+        `${BASE_URL}api/sendFollowRequest/`,
+        {
+          method: "POST",
+          body: JSON.stringify({ username }),
+        }
+      );
+
+      if (response.ok) {
+        // Actualizar follow_status localmente a "requested"
+        setResults((prev) =>
+          prev.map((user) =>
+            user.username === username
+              ? { ...user, follow_status: "requested" }
+              : user
+          )
+        );
+      } else {
+        console.error("Server error");
+      }
+    } catch (error) {
+      console.error("Error following user", error);
+    }
+  };
   const handleUnFollow = async (username) => {
     try {
       const response = await fetchWithAuth(
@@ -84,7 +116,14 @@ export default function Followed() {
       );
 
       if (response.ok) {
-        setResults((prev) => prev.filter((user) => user.username !== username));
+        // Actualizar follow_status localmente a "not_following"
+        setResults((prev) =>
+          prev.map((user) =>
+            user.username === username
+              ? { ...user, follow_status: "not_following" }
+              : user
+          )
+        );
       } else {
         console.error("Server error");
       }
@@ -92,9 +131,65 @@ export default function Followed() {
       console.error("Error unfollowing user", error);
     }
   };
+  const handlePending = async (username) => {
+    try {
+      const response = await fetchWithAuth(
+        `${BASE_URL}api/cancelFollowRequest/?username=${encodeURIComponent(username)}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        // Actualizar follow_status localmente a "not_following"
+        setResults((prev) =>
+          prev.map((user) =>
+            user.username === username
+              ? { ...user, follow_status: "not_following" }
+              : user
+          )
+        );
+      } else {
+        console.error("Server error");
+      }
+    } catch (error) {
+      console.error("Error canceling follow request", error);
+    }
+  };
+
+  const handleKickOut = async (username) => {
+    try {
+      const response = await fetchWithAuth(
+        `${BASE_URL}api/kickOut/?username=${encodeURIComponent(username)}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        // Si elimina de followers al usuario, se elimina de la lista
+        setResults((prev) => prev.filter((user) => user.username !== username));
+      } else {
+        console.error("Server error");
+      }
+    } catch (error) {
+      console.error("Error canceling follow request", error);
+    }
+  };
 
   const renderItem = ({ item }) => (
-    <View style={styles.userRow}>
+    <Pressable
+      style={styles.userRow}
+      onPress={() => {
+        if (item.username === authTokens.username)
+          navigation.navigate("Profile", { showHeaderButtons: false });
+        else
+          navigation.navigate("VisitProfile", {
+            username: item.username,
+            follow_status: item.follow_status,
+          });
+      }}
+    >
       <Image source={getUserAvatar(item)} style={styles.imageUser} />
       <View style={styles.userInfo}>
         <Text style={styles.username}>{item.username}</Text>
@@ -103,7 +198,7 @@ export default function Followed() {
       <View style={styles.buttonRow}>
         {item.follow_status === "following" ? (
           <Pressable
-            onPress={() => handleUnFollow(item.username)}
+            onPress={() => setSelectedUser(item)}
             style={styles.followButton}
           >
             <Text style={styles.followButtonText}>UnFollow</Text>
@@ -123,8 +218,14 @@ export default function Followed() {
             <Text style={styles.followButtonText}>Follow</Text>
           </Pressable>
         )}
+        <Pressable
+          onPress={() => setdeleteUser(item)}
+          style={styles.deleteButton}
+        >
+          <Entypo name="cross" size={24} color="black" />
+        </Pressable>
       </View>
-    </View>
+    </Pressable>
   );
 
   return (
@@ -142,19 +243,39 @@ export default function Followed() {
           </Text>
         </View>
       ) : (
-        <FlatList
-          data={results}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.username}
-          onEndReached={() => searchUsers(false)}
-          onEndReachedThreshold={0.5} // Carga más cuando estás al 50% del final
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={() => searchUsers(true)}
-            />
-          }
-        />
+        <>
+          <UnfollowAlert
+            visible={selectedUser !== null}
+            onCancel={() => setSelectedUser(null)}
+            onDiscard={() => {
+              handleUnFollow(selectedUser.username);
+              setSelectedUser(null);
+            }}
+            username={selectedUser?.username}
+          />
+          <KickOutAlert
+            visible={deleteUser !== null}
+            onCancel={() => setdeleteUser(null)}
+            onDiscard={() => {
+              handleKickOut(deleteUser.username);
+              setdeleteUser(null);
+            }}
+            username={deleteUser?.username}
+          />
+          <FlatList
+            data={results}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.username}
+            onEndReached={() => searchUsers(false)}
+            onEndReachedThreshold={0.5} // Carga más cuando estás al 50% del final
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={() => searchUsers(true)}
+              />
+            }
+          />
+        </>
       )}
 
       {loadingMore && <ActivityIndicator size="small" style={styles.icon} />}

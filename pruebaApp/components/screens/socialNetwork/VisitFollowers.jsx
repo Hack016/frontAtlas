@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   View,
   StyleSheet,
@@ -10,22 +10,28 @@ import {
   Pressable,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
-import { BASE_URL } from "../../context/config";
-import { useFetchWithAuth } from "../../utils/fetchWithAuth";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { BASE_URL } from "../../../context/config";
+import { useFetchWithAuth } from "../../../utils/fetchWithAuth";
 import { useState } from "react";
-import { getUserAvatar } from "../../utils/avatar";
-import { Ionicons, Entypo } from "@expo/vector-icons";
+import { getUserAvatar } from "../../../utils/avatar";
+import { Ionicons } from "@expo/vector-icons";
+import { AuthContext } from "../../../context/AuthContext";
+import { UnfollowAlert } from "../../../utils/UnfollowAlert";
 const LIMIT = 20;
 
-export default function Followers() {
+export default function VisitFollowers() {
   const navigation = useNavigation();
+  const { authTokens } = useContext(AuthContext);
   const [results, setResults] = useState([]);
   const fetchWithAuth = useFetchWithAuth();
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const route = useRoute();
+  const { username } = route.params;
+  const [selectedUser, setSelectedUser] = useState(null);
 
   React.useEffect(() => {
     searchUsers(true);
@@ -44,7 +50,7 @@ export default function Followers() {
 
     try {
       const response = await fetchWithAuth(
-        `${BASE_URL}api/getFollowers/?limit=${LIMIT}&offset=${initial ? 0 : offset}`,
+        `${BASE_URL}api/visitFollowers/?username=${encodeURIComponent(username)}&limit=${LIMIT}&offset=${initial ? 0 : offset}`,
         { method: "GET" }
       );
 
@@ -151,64 +157,48 @@ export default function Followers() {
     }
   };
 
-  const handleKickOut = async (username) => {
-    try {
-      const response = await fetchWithAuth(
-        `${BASE_URL}api/kickOut/?username=${encodeURIComponent(username)}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      if (response.ok) {
-        // Si elimina de followers al usuario, se elimina de la lista
-        setResults((prev) => prev.filter((user) => user.username !== username));
-      } else {
-        console.error("Server error");
-      }
-    } catch (error) {
-      console.error("Error canceling follow request", error);
-    }
-  };
-
   const renderItem = ({ item }) => (
-    <View style={styles.userRow}>
+    <Pressable
+      style={styles.userRow}
+      onPress={() => {
+        if (item.username === authTokens.username)
+          navigation.navigate("Profile");
+        else
+          navigation.navigate("VisitProfile", {
+            username: item.username,
+            follow_status: item.follow_status,
+          });
+      }}
+    >
       <Image source={getUserAvatar(item)} style={styles.imageUser} />
       <View style={styles.userInfo}>
         <Text style={styles.username}>{item.username}</Text>
         <Text style={styles.name}>{item.nombre}</Text>
       </View>
-      <View style={styles.buttonRow}>
-        {item.follow_status === "following" ? (
-          <Pressable
-            onPress={() => handleUnFollow(item.username)}
-            style={styles.followButton}
-          >
-            <Text style={styles.followButtonText}>UnFollow</Text>
-          </Pressable>
-        ) : item.follow_status === "requested" ? (
-          <Pressable
-            onPress={() => handlePending(item.username)}
-            style={styles.pendingButton}
-          >
-            <Text style={styles.pendingButtonText}>Requested</Text>
-          </Pressable>
-        ) : (
-          <Pressable
-            onPress={() => handleFollow(item.username)}
-            style={styles.followButton}
-          >
-            <Text style={styles.followButtonText}>Follow</Text>
-          </Pressable>
-        )}
+      {item.username === authTokens.username ? null : item.follow_status ===
+        "following" ? (
         <Pressable
-          onPress={() => handleKickOut(item.username)}
-          style={styles.deleteButton}
+          onPress={() => setSelectedUser(item)}
+          style={styles.followButton}
         >
-          <Entypo name="cross" size={24} color="black" />
+          <Text style={styles.followButtonText}>UnFollow</Text>
         </Pressable>
-      </View>
-    </View>
+      ) : item.follow_status === "requested" ? (
+        <Pressable
+          onPress={() => handlePending(item.username)}
+          style={styles.pendingButton}
+        >
+          <Text style={styles.pendingButtonText}>Requested</Text>
+        </Pressable>
+      ) : (
+        <Pressable
+          onPress={() => handleFollow(item.username)}
+          style={styles.followButton}
+        >
+          <Text style={styles.followButtonText}>Follow</Text>
+        </Pressable>
+      )}
+    </Pressable>
   );
 
   return (
@@ -222,23 +212,34 @@ export default function Followers() {
           </Text>
 
           <Text style={{ fontSize: 16, color: "gray" }}>
-            When people ask to follow you and you accept, you will see them here
+            Here you would see the followers of {username}
           </Text>
         </View>
       ) : (
-        <FlatList
-          data={results}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.username}
-          onEndReached={() => searchUsers(false)}
-          onEndReachedThreshold={0.5} // Carga más cuando estás al 50% del final
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={() => searchUsers(true)}
-            />
-          }
-        />
+        <>
+          <UnfollowAlert
+            visible={selectedUser !== null}
+            onCancel={() => setSelectedUser(null)}
+            onDiscard={() => {
+              handleUnFollow(selectedUser.username);
+              setSelectedUser(null);
+            }}
+            username={selectedUser?.username}
+          />
+          <FlatList
+            data={results}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.username}
+            onEndReached={() => searchUsers(false)}
+            onEndReachedThreshold={0.5} // Carga más cuando estás al 50% del final
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={() => searchUsers(true)}
+              />
+            }
+          />
+        </>
       )}
 
       {loadingMore && <ActivityIndicator size="small" style={styles.icon} />}

@@ -5,17 +5,18 @@ import {
   Dimensions,
   Pressable,
   Text,
+  View,
 } from "react-native";
 import { TextInput, ActivityIndicator } from "react-native-paper";
 // import { AuthContext } from "../context/AuthContext";
 import React from "react";
+import { Ionicons } from "@expo/vector-icons";
 import { registerWithCredentials } from "../components/Signin";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
 export const RegisterFunction = ({ navigation }) => {
-  // const { logTokens } = useContext(AuthContext);
   const [email, onChangeEmail] = React.useState("");
   const [nombre, onChangeNombre] = React.useState("");
   const [username, onChangeUsername] = React.useState("");
@@ -165,43 +166,61 @@ export const RegisterFunction = ({ navigation }) => {
         {errorpassword !== "" && (
           <Text style={styles.error}>{errorpassword}</Text>
         )}
-        <TextInput
-          style={styles.input}
-          label="Password"
-          onChangeText={setPassword}
-          value={password}
-          secureTextEntry={!showPassword}
-          mode="outlined"
-          outlineColor="#007BFF"
-          activeOutlineColor="#007BFF"
-          activeUnderlineColor="#007BFF"
-          right={
-            <TextInput.Icon
-              icon={showPassword ? "eye-off" : "eye"}
-              onPress={() => setShowPassword(!showPassword)}
-            />
-          }
-        />
+        <View style={styles.passwordInputContainer}>
+          <TextInput
+            style={styles.input}
+            label="Password"
+            onChangeText={setPassword}
+            value={password}
+            secureTextEntry={!showPassword}
+            mode="outlined"
+            outlineColor="#007BFF"
+            activeOutlineColor="#007BFF"
+            activeUnderlineColor="#007BFF"
+            // right={
+            //   <TextInput.Icon
+            //     icon={showPassword ? "eye-off" : "eye"}
+            //     onPress={() => setShowPassword(!showPassword)}
+            //   />
+            // }
+          />
+          <Ionicons
+            name={showPassword ? "eye-off" : "eye"}
+            size={24}
+            color="gray"
+            style={styles.eyeIcon}
+            onPress={() => setShowPassword(!showPassword)}
+          />
+        </View>
         {errorpassword !== "" && (
           <Text style={styles.error}>{errorpassword}</Text>
         )}
-        <TextInput
-          style={styles.input}
-          label="Repeat Password"
-          onChangeText={setPasswordRepeated}
-          value={passwordRepeated}
-          secureTextEntry={!showPasswordRepeated}
-          mode="outlined"
-          outlineColor="#007BFF"
-          activeOutlineColor="#007BFF"
-          activeUnderlineColor="#007BFF"
-          right={
-            <TextInput.Icon
-              icon={showPasswordRepeated ? "eye-off" : "eye"}
-              onPress={() => setShowPasswordRepeated(!showPasswordRepeated)}
-            />
-          }
-        />
+        <View style={styles.passwordInputContainer}>
+          <TextInput
+            style={styles.input}
+            label="Repeat Password"
+            onChangeText={setPasswordRepeated}
+            value={passwordRepeated}
+            secureTextEntry={!showPasswordRepeated}
+            mode="outlined"
+            outlineColor="#007BFF"
+            activeOutlineColor="#007BFF"
+            activeUnderlineColor="#007BFF"
+            // right={
+            //   <TextInput.Icon
+            //     icon={showPasswordRepeated ? "eye-off" : "eye"}
+            //     onPress={() => setShowPasswordRepeated(!showPasswordRepeated)}
+            //   />
+            // }
+          />
+          <Ionicons
+            name={showPassword ? "eye-off" : "eye"}
+            size={24}
+            color="gray"
+            style={styles.eyeIcon}
+            onPress={() => setShowPassword(!showPassword)}
+          />
+        </View>
         <Pressable
           disabled={isLoading}
           style={({ pressed }) =>
@@ -271,5 +290,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     textAlign: "center",
+  },
+  passwordInputContainer: {
+    width: "80%",
+    position: "relative",
+    marginBottom: 12,
+  },
+  eyeIcon: {
+    position: "absolute",
+    right: 20,
+    top: 30, // ajusta según altura del input
+    zIndex: 1,
   },
 });

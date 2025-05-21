@@ -12,7 +12,6 @@ export function Home() {
     <View style={{ flex: 1 }}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
-          // headerShown: false,
           tabBarIcon: ({ focused, color, size }) => {
             if (route.name === "Train") {
               return <FontAwesome6 name="dumbbell" size={size} color={color} />;

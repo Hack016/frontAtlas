@@ -26,6 +26,7 @@ export default function TrainFeedScreen() {
   const [offset, setOffset] = React.useState(0);
   const [loadingMore, setLoadingMore] = React.useState(false);
   const [hasMore, setHasMore] = React.useState(true);
+  const [initialLoadDone, setInitialLoadDone] = React.useState(false); //Bloquear onEndReached hasta que se carguen los datos iniciales
 
   const fetchExercises = async (initial = false) => {
     try {
@@ -36,6 +37,7 @@ export default function TrainFeedScreen() {
         setHasMore(true);
         setRefreshing(true);
       } else {
+        if (!initialLoadDone) return;
         setLoadingMore(true);
       }
 
@@ -48,6 +50,7 @@ export default function TrainFeedScreen() {
       if (response.ok) {
         if (initial) {
           setExercises(data.results);
+          setInitialLoadDone(true);
         } else {
           // setExercises((prev) => [...prev, ...data.results]);
           setExercises((prev) => {
