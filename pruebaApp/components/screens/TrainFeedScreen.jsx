@@ -13,6 +13,7 @@ import { useFetchWithAuth } from "../../utils/fetchWithAuth";
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../../context/config";
 import { Entypo } from "react-native-vector-icons";
+import { getExerciseImageUrl } from "../../utils/avatar";
 
 const LIMIT = 20; // Define cuantos ejs se cargan por página
 
@@ -94,7 +95,10 @@ export default function TrainFeedScreen() {
       >
         <View style={styles.exercisecontainer}>
           {item.imagen && (
-            <Image source={{ uri: item.imagen }} style={styles.image} />
+            <Image
+              source={getExerciseImageUrl(item.imagen)}
+              style={styles.image}
+            />
           )}
           <View style={styles.textContainer}>
             <Text style={styles.exerciseName}>{item.nombre}</Text>

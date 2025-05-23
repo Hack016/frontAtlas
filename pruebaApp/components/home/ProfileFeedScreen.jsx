@@ -16,7 +16,7 @@ import { BASE_URL } from "../../context/config";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { getUserAvatar } from "../../utils/avatar";
 import { Entypo, FontAwesome6 } from "react-native-vector-icons";
-import { ResumeWorkoutAS } from "../ResumeWorkoutAS";
+import { ResumeWorkoutAS } from "../../utils/ResumeWorkoutAS";
 import { WorkoutTimeContext } from "../../context/WorkoutTimeContext";
 import { SessionCard } from "../SessionCard";
 const LIMIT = 5;

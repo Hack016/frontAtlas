@@ -13,6 +13,7 @@ import { WorkoutTrainContext } from "../context/WorkoutTrainContext";
 import Modal from "react-native-modal";
 import { useNavigation } from "@react-navigation/native";
 import { Entypo, Feather } from "@expo/vector-icons";
+import { getExerciseImageUrl } from "../utils/avatar";
 
 export const ExerciseCard = ({ ejercicio }) => {
   const navigation = useNavigation();
@@ -109,7 +110,10 @@ export const ExerciseCard = ({ ejercicio }) => {
         }
       >
         <View style={styles.headerRow}>
-          <Image source={{ uri: ejercicio.imagen }} style={styles.image} />
+          <Image
+            source={getExerciseImageUrl(ejercicio.imagen)}
+            style={styles.image}
+          />
           <Text style={styles.title}>{ejercicio.nombre}</Text>
         </View>
         <Pressable onPress={() => setIsExerciseDotsVisible(true)}>

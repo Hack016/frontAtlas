@@ -15,8 +15,10 @@ import { useNavigation } from "@react-navigation/native";
 import { useRoute } from "@react-navigation/native";
 import { BASE_URL } from "../../../context/config";
 import { getUserAvatar } from "../../../utils/avatar";
-import { Entypo, FontAwesome6 } from "react-native-vector-icons";
+import { FontAwesome6 } from "react-native-vector-icons";
 import { SessionCard } from "../../SessionCard";
+import { UnfollowAlert } from "../../../utils/UnfollowAlert";
+
 const LIMIT = 5;
 
 export default function VisitProfile() {
@@ -32,6 +34,7 @@ export default function VisitProfile() {
   const [hasMore, setHasMore] = React.useState(true);
   const [loadingMore, setLoadingMore] = React.useState(false);
   const [initialLoadDone, setInitialLoadDone] = React.useState(false); //Bloquear onEndReached hasta que se carguen los datos iniciales
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const fetchProfileData = async () => {
     try {
@@ -200,6 +203,15 @@ export default function VisitProfile() {
   const renderHeader = () => {
     return (
       <View style={styles.headerContainer}>
+        <UnfollowAlert
+          visible={selectedUser !== null}
+          onCancel={() => setSelectedUser(null)}
+          onDiscard={() => {
+            handleUnFollow(selectedUser.username);
+            setSelectedUser(null);
+          }}
+          username={selectedUser?.username}
+        />
         <Image
           source={getUserAvatar(profileData.usuario)}
           style={styles.profileImage}
@@ -259,7 +271,7 @@ export default function VisitProfile() {
         </View>
         {follow_state === "following" ? (
           <Pressable
-            onPress={() => handleUnFollow(username)}
+            onPress={() => setSelectedUser(profileData.usuario)}
             style={styles.followButton}
           >
             <Text style={styles.followButtonText}>UnFollow</Text>

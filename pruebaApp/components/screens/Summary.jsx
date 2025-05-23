@@ -1,7 +1,7 @@
 import { Text, StyleSheet } from "react-native";
 
 export default function Summary() {
-  return <Text style={styles.text}>Profile</Text>;
+  return <Text style={styles.text}>Summary</Text>;
 }
 
 const styles = StyleSheet.create({

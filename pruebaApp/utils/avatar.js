@@ -25,3 +25,17 @@ export const getUserAvatar = (usuario) => {
   }
   return require("../assets/TitanVectorizado.png");
 };
+
+export const getExerciseImageUrl = (imagen) => {
+  if (!imagen) return null;
+
+  if (imagen.startsWith("http")) {
+    return { uri: imagen };
+  }
+
+  const cleanBaseUrl = BASE_URL.endsWith("/")
+    ? BASE_URL.slice(0, -1)
+    : BASE_URL;
+
+  return { uri: `${cleanBaseUrl}${imagen}` };
+};

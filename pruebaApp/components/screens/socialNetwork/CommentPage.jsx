@@ -16,7 +16,6 @@ import { useNavigation } from "@react-navigation/native";
 import { useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { getUserAvatar } from "../../../utils/avatar";
-import { UnfollowAlert } from "../../../utils/UnfollowAlert";
 import { AuthContext } from "../../../context/AuthContext";
 const LIMIT = 20;
 

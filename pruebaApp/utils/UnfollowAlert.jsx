@@ -7,7 +7,7 @@ export const UnfollowAlert = ({ visible, onCancel, onDiscard, username }) => {
       <Dialog visible={visible} onDismiss={onCancel} style={styles.container}>
         <Dialog.Content>
           <Text style={styles.text}>
-            If you change your mind, you'll have to request to follow {username}
+            If you change your mind, you'll have to request to follow {username}{" "}
             again
           </Text>
           <Pressable

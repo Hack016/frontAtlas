@@ -357,22 +357,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-  exerciseName: { fontSize: 18, fontWeight: "bold" },
-  subText: { fontSize: 14, color: "gray", marginTop: 4 },
-  setText: { fontSize: 14, marginLeft: 8 },
-  image: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    marginRight: 12,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#333",
-  },
-  exerciserow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "space-between",

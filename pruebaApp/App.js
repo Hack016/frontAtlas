@@ -4,8 +4,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { LoginFunction } from "./components/Login";
 import { RegisterFunction } from "./components/Register";
-import { Settings } from "./components/screens/Settings";
-import { EditProfile } from "./components/screens/EditProfile";
+import { Settings } from "./components/screens/settings/Settings";
+import { EditProfile } from "./components/screens/settings/EditProfile";
 import { AuthContext } from "./context/AuthContext";
 import { useContext } from "react";
 import {
@@ -19,9 +19,9 @@ import { Home } from "./components/Home";
 import ExerciseDetail from "./components/screens/ExerciseDetail";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { OptionalInfo } from "./components/optionalInfo";
-import { AccountSettings } from "./components/screens/AccountSettings";
-import { ChangeUsername } from "./components/screens/changeUsername";
-import { ChangeEmail } from "./components/screens/changeEmail";
+import { AccountSettings } from "./components/screens/settings/AccountSettings";
+import { ChangeUsername } from "./components/screens/settings/changeUsername";
+import { ChangeEmail } from "./components/screens/settings/changeEmail";
 import TrainFeedScreen from "./components/screens/TrainFeedScreen";
 import { WorkoutSession } from "./components/screens/WorkoutSession";
 import ExerciseFeed from "./components/screens/ExerciseFeed";
@@ -29,7 +29,7 @@ import WorkoutPost from "./components/screens/WorkoutPost";
 import { WorkoutTimeProvider } from "./context/WorkoutTimeContext";
 import { WorkoutTrainProvider } from "./context/WorkoutTrainContext";
 import SearchUsers from "./components/screens/socialNetwork/SearchUsers";
-import FollowRequests from "./components/screens/FollowRequests";
+import FollowRequests from "./components/screens/socialNetwork/FollowRequests";
 import Followers from "./components/screens/socialNetwork/Followers";
 import Followed from "./components/screens/socialNetwork/Followed";
 import VisitProfile from "./components/screens/socialNetwork/VisitProfile";
@@ -40,6 +40,7 @@ import CommentSection from "./components/screens/socialNetwork/CommentPage";
 import Likes from "./components/screens/socialNetwork/Likes";
 // import branch from "react-native-branch";
 import { useEffect } from "react";
+import { DetailedSessionScreen } from "./components/screens/DetailedSession";
 
 const Stack = createNativeStackNavigator();
 
@@ -149,6 +150,10 @@ const AppContent = () => {
                   name="WorkoutPost"
                   component={WorkoutPost}
                   options={{ headerTitle: "Finish workout" }}
+                />
+                <Stack.Screen
+                  name="Workout Detail"
+                  component={DetailedSessionScreen}
                 />
               </>
             ) : (

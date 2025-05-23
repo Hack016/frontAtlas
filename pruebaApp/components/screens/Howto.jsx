@@ -12,6 +12,7 @@ import { useFetchWithAuth } from "../../utils/fetchWithAuth";
 import { useRoute } from "@react-navigation/native";
 import { Dimensions } from "react-native";
 import { BASE_URL } from "../../context/config";
+import { getExerciseImageUrl } from "../../utils/avatar";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -71,7 +72,11 @@ export default function HowTo() {
             <FlatList
               data={ejercicio.imagenes}
               renderItem={({ item }) => (
-                <Image source={{ uri: item }} style={styles.image} key={item} />
+                <Image
+                  source={getExerciseImageUrl(item)}
+                  style={styles.image}
+                  key={item}
+                />
               )}
               horizontal
               pagingEnabled={true}
@@ -83,10 +88,14 @@ export default function HowTo() {
                 setCurrentIndex(index);
               }}
             />
+
             {renderDots()}
           </View>
         ) : ejercicio.imagenes?.length === 1 ? (
-          <Image source={{ uri: ejercicio.imagenes[0] }} style={styles.image} />
+          <Image
+            source={getExerciseImageUrl(ejercicio.imagenes[0])}
+            style={styles.image}
+          />
         ) : (
           <Image
             source={require("../../assets/TitanVectorizado.png")}

@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
-import { ResumeWorkoutAS } from "../ResumeWorkoutAS";
+import { ResumeWorkoutAS } from "../../utils/ResumeWorkoutAS";
 import { WorkoutTimeContext } from "../../context/WorkoutTimeContext";
 import { useFetchWithAuth } from "../../utils/fetchWithAuth";
 import { BASE_URL } from "../../context/config";

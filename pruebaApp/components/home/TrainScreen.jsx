@@ -1,8 +1,8 @@
-import { Text, ScrollView, View, Pressable, StyleSheet } from "react-native";
+import { Text, ScrollView, Pressable, StyleSheet } from "react-native";
 import { Entypo } from "react-native-vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useContext } from "react";
-import { ResumeWorkoutAS } from "../ResumeWorkoutAS";
+import { ResumeWorkoutAS } from "../../utils/ResumeWorkoutAS";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WorkoutTimeContext } from "../../context/WorkoutTimeContext";
 

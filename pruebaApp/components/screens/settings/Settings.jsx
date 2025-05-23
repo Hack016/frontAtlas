@@ -1,44 +1,47 @@
 import { ScrollView, View, Text, Pressable, StyleSheet } from "react-native";
 import { Entypo, MaterialCommunityIcons } from "react-native-vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../../context/AuthContext";
 import { useContext } from "react";
 import { useRoute } from "@react-navigation/native";
 
-export const AccountSettings = () => {
+export const Settings = () => {
   const { logout } = useContext(AuthContext);
   const navigation = useNavigation();
   const route = useRoute();
   const { email, username } = route.params;
   return (
     <ScrollView contentContainerStyle={styles.scrollcontainer}>
-      <Text style={styles.typeSettingsText}>Edit Account profile</Text>
+      <Text style={styles.typeSettingsText}>Account</Text>
       <Pressable
         style={styles.card}
-        onPress={() =>
-          navigation.navigate("Change Username", { username: username })
-        }
+        onPress={() => navigation.navigate("EditProfile")}
       >
         <View style={styles.rowCard}>
           <MaterialCommunityIcons name="account" size={24} />
-          <Text style={styles.text}>Change username</Text>
+          <Text style={styles.text}>Profile</Text>
         </View>
         <Entypo name="chevron-right" size={24} />
       </Pressable>
       <Pressable
         style={styles.card}
-        onPress={() => navigation.navigate("Change Email", { email: email })}
+        onPress={() =>
+          navigation.navigate("Account Settings", {
+            email: email,
+            username: username,
+          })
+        }
       >
         <View style={styles.rowCard}>
           <Entypo name="lock" size={24} />
-          <Text style={styles.text}>Change email</Text>
+          <Text style={styles.text}>Account</Text>
         </View>
         <Entypo name="chevron-right" size={24} />
       </Pressable>
       <Pressable style={styles.card} onPress={() => console.log("Theme")}>
         <View style={styles.rowCard}>
           <Entypo name="moon" size={24} />
-          <Text style={styles.text}>Update password</Text>
+          <Text style={styles.text}>Theme</Text>
         </View>
         <Entypo name="chevron-right" size={24} />
       </Pressable>
@@ -50,7 +53,7 @@ export const AccountSettings = () => {
         }
         onPress={() => logout()}
       >
-        <Text style={[styles.text, { color: "white" }]}>Delete account</Text>
+        <Text style={[styles.text, { color: "white" }]}>Logout</Text>
       </Pressable>
     </ScrollView>
   );

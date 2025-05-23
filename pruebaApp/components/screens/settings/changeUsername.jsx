@@ -6,50 +6,46 @@ import {
   View,
   Pressable,
   ActivityIndicator,
-  Dimensions,
   Alert,
 } from "react-native";
 import { TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { BASE_URL } from "../../context/config";
-import { useFetchWithAuth } from "../../utils/fetchWithAuth";
+import { BASE_URL } from "../../../context/config";
+import { useFetchWithAuth } from "../../../utils/fetchWithAuth";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 
-const { width } = Dimensions.get("window");
-
-export const ChangeEmail = () => {
+export const ChangeUsername = () => {
   const navigation = useNavigation();
   const fetchWithAuth = useFetchWithAuth();
   const route = useRoute();
-  const { email } = route.params;
-  const [newemail, setnewmail] = useState(email);
+  const { username } = route.params;
+  const [newusername, setnewusername] = useState(username);
   const [isAvailable, setIsAvailable] = useState(null);
   const [isInvalid, setIsInvalid] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const hasChanged = email !== newemail;
+  const hasChanged = username !== newusername;
 
-  const isValidEmailFormat = (email) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isValidUsernameFormat = (username) =>
+    /^[a-zA-Z0-9_]{4,15}$/.test(username); //test para el formato de username (minimo 4 caracteres y maximo 15)
 
-  const checkEmailAvailability = async (email) => {
+  const checkUsernameAvailability = async (username) => {
     const response = await fetchWithAuth(
-      `${BASE_URL}api/check-email/?email=${encodeURIComponent(email)}`,
+      `${BASE_URL}api/check-username/?username=${encodeURIComponent(username)}`,
       {
         method: "GET",
       }
     );
-
     const data = await response.json();
     return data.available;
   };
-  const updateEmail = async (email) => {
+  const updateUsername = async (username) => {
     try {
-      const response = await fetchWithAuth(`${BASE_URL}api/check-email/`, {
+      const response = await fetchWithAuth(`${BASE_URL}api/check-username/`, {
         method: "POST",
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ username }),
       });
       if (response.ok) {
         navigation.reset({
@@ -58,12 +54,12 @@ export const ChangeEmail = () => {
         });
       } else {
         const errorData = await response.json();
-        console.log("Email update error details:", errorData);
+        console.log("Username update error details:", errorData);
 
         Alert.alert("Error", errorData.error || "Something went wrong.");
       }
     } catch (error) {
-      console.error("Update email failed", error);
+      console.error("Update username failed", error);
       Alert.alert("Error", "Network error.");
     }
   };
@@ -72,18 +68,18 @@ export const ChangeEmail = () => {
     const timeout = setTimeout(() => {
       if (
         hasChanged &&
-        newemail.trim().length > 0 &&
-        isValidEmailFormat(newemail)
+        newusername.trim().length > 0 &&
+        isValidUsernameFormat(newusername)
       ) {
         setLoading(true);
         setIsAvailable(null);
         setIsInvalid(null);
-        checkEmailAvailability(newemail).then((available) => {
+        checkUsernameAvailability(newusername).then((available) => {
           setIsAvailable(available);
           setLoading(false);
         });
       } else {
-        if (!isValidEmailFormat(newemail)) {
+        if (!isValidUsernameFormat(newusername)) {
           setIsInvalid(true);
           setIsAvailable(null);
         } else {
@@ -93,21 +89,21 @@ export const ChangeEmail = () => {
     }, 1000); // Esperar 1000ms
 
     return () => clearTimeout(timeout);
-  }, [newemail]);
+  }, [newusername]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.label}>Email </Text>
+        <Text style={styles.label}>Username</Text>
         <View style={styles.inputContainer}>
           <TextInput
-            value={newemail}
-            onChangeText={setnewmail}
+            value={newusername}
+            onChangeText={setnewusername}
             mode="flat"
             style={styles.input}
             underlineColor="transparent"
             activeUnderlineColor="transparent"
-            placeholder={email}
+            placeholder={username}
           />
           {loading ? (
             <ActivityIndicator size="small" style={styles.icon} />
@@ -135,7 +131,7 @@ export const ChangeEmail = () => {
         )}
         {isInvalid === true && (
           <Text style={styles.errorText}>
-            Incorrect email format. Try another.
+            Invalid username format. Try another.
           </Text>
         )}
 
@@ -148,9 +144,9 @@ export const ChangeEmail = () => {
             },
           ]}
           disabled={
-            !hasChanged || !isValidEmailFormat(newemail) || !isAvailable
+            !hasChanged || !isValidUsernameFormat(newusername) || !isAvailable
           }
-          onPress={() => updateEmail(newemail)}
+          onPress={() => updateUsername(newusername)}
         >
           <Text style={styles.updateText}>Update</Text>
         </Pressable>
@@ -180,7 +176,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: "black",
+    color: "white",
     fontSize: 16,
     backgroundColor: "transparent",
   },

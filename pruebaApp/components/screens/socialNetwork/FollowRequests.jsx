@@ -11,10 +11,10 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { BASE_URL } from "../../context/config";
-import { useFetchWithAuth } from "../../utils/fetchWithAuth";
+import { BASE_URL } from "../../../context/config";
+import { useFetchWithAuth } from "../../../utils/fetchWithAuth";
 import { useState } from "react";
-import { getUserAvatar } from "../../utils/avatar";
+import { getUserAvatar } from "../../../utils/avatar";
 import { Ionicons } from "@expo/vector-icons";
 const LIMIT = 20;
 

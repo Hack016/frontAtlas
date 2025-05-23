@@ -1,7 +1,7 @@
 // components/SessionCard.js
 import React from "react";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
-import { getUserAvatar } from "../utils/avatar";
+import { getExerciseImageUrl, getUserAvatar } from "../utils/avatar";
 import { Ionicons, Fontisto } from "@expo/vector-icons";
 import { sharePost } from "../utils/branch";
 import { useFetchWithAuth } from "../utils/fetchWithAuth";
@@ -54,7 +54,12 @@ export const SessionCard = ({ item }) => {
     }
   };
   return (
-    <View style={styles.sessionCard}>
+    <Pressable
+      style={styles.sessionCard}
+      onPress={() =>
+        navigation.navigate("Workout Detail", { idSesion: item.idSesion })
+      }
+    >
       {/* Nombre de usuario con fecha de la sesión y foto de perfil  */}
       <Pressable
         style={styles.userHeader}
@@ -74,7 +79,7 @@ export const SessionCard = ({ item }) => {
         <View>
           <Text style={styles.userSession}>{item.usuario.username}</Text>
           <Text style={styles.sessionDate}>
-            {new Date(item.fecha).toLocaleDateString()}
+            {new Date(item.fecha).toLocaleString()}
           </Text>
         </View>
       </Pressable>
@@ -100,7 +105,10 @@ export const SessionCard = ({ item }) => {
       {item.ejercicios.map((ej, index) => (
         <View key={index} style={styles.exercisePreview}>
           <View style={styles.exerciseRow}>
-            <Image source={{ uri: ej.imagen }} style={styles.image} />
+            <Image
+              source={getExerciseImageUrl(ej.imagen)}
+              style={styles.image}
+            />
             <Text style={styles.exerciseName}>{ej.nombre}</Text>
           </View>
         </View>
@@ -165,7 +173,7 @@ export const SessionCard = ({ item }) => {
           <Ionicons name="share-social-outline" size={24} color="black" />
         </Pressable>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

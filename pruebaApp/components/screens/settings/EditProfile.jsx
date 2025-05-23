@@ -10,14 +10,14 @@ import {
   Pressable,
   Alert,
 } from "react-native";
-import { useFetchWithAuth } from "../../utils/fetchWithAuth";
-import { BASE_URL } from "../../context/config";
+import { useFetchWithAuth } from "../../../utils/fetchWithAuth";
+import { BASE_URL } from "../../../context/config";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
-import { changeProfilePicture } from "../ChangeProfilePicture";
+import { changeProfilePicture } from "./ChangeProfilePicture";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useNavigation } from "@react-navigation/native";
-import { getUserAvatar } from "../../utils/avatar";
+import { getUserAvatar } from "../../../utils/avatar";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 
 export const EditProfile = () => {
