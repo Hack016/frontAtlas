@@ -9,11 +9,11 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useContext } from "react";
-import { WorkoutTrainContext } from "../context/WorkoutTrainContext";
+import { WorkoutTrainContext } from "../../context/WorkoutTrainContext";
 import Modal from "react-native-modal";
 import { useNavigation } from "@react-navigation/native";
 import { Entypo, Feather } from "@expo/vector-icons";
-import { getExerciseImageUrl } from "../utils/avatar";
+import { getExerciseImageUrl } from "../../utils/avatar";
 
 export const ExerciseCard = ({ ejercicio }) => {
   const navigation = useNavigation();

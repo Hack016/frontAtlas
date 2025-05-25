@@ -8,6 +8,8 @@ import {
   RefreshControl,
   Image,
   Pressable,
+  TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { useFetchWithAuth } from "../../utils/fetchWithAuth";
 import { useNavigation } from "@react-navigation/native";
@@ -15,6 +17,8 @@ import { BASE_URL } from "../../context/config";
 import { Entypo } from "react-native-vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { getExerciseImageUrl } from "../../utils/avatar";
+import { getConventionalName } from "../../utils/musclename_converter";
+import { MaterialIcons, FontAwesome6 } from "@expo/vector-icons";
 
 const LIMIT = 20; // Define cuantos ejs se cargan por página
 
@@ -30,6 +34,11 @@ export default function ExerciseFeed() {
   const [hasMore, setHasMore] = React.useState(true);
   const [selectedExercises, setSelectedExercises] = React.useState([]);
   const [initialLoadDone, setInitialLoadDone] = React.useState(false); //Bloquear onEndReached hasta que se carguen los datos iniciales
+
+  //variables de search bar
+  const [loading, setLoading] = React.useState(false);
+  const [exerciseSearch, setExerciseSearch] = React.useState("");
+  const [results, setResults] = React.useState([]);
 
   const toggleSelectExercise = (item) => {
     setSelectedExercises((prev) => {
@@ -88,13 +97,43 @@ export default function ExerciseFeed() {
     }
   };
 
+  const searchExercises = async () => {
+    try {
+      const response = await fetchWithAuth(
+        `${BASE_URL}api/searchExercises/?exercisename=${encodeURIComponent(exerciseSearch)}`,
+        { method: "GET" }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setResults(data.results);
+      } else {
+        console.error("Error en el servidor");
+      }
+    } catch (error) {
+      console.error("Error fetching users", error);
+    }
+  };
+
   React.useEffect(() => {
     fetchExercises(true);
   }, []);
 
-  const renderItem = (
-    { item } // Renderiza cada ejercicio, lo hago en función a parte para que el código esté más limpio
-  ) => (
+  React.useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (exerciseSearch.trim().length > 2) {
+        setLoading(true);
+        searchExercises().finally(() => setLoading(false));
+      } else {
+        setResults([]);
+      }
+    }, 1000); // una vez que escribe el ultimo caracter espera 1000 ms
+
+    return () => clearTimeout(timeout); // limpia si el usuario sigue escribiendo
+  }, [exerciseSearch]);
+
+  const renderItem = ({ item }) => (
     <View style={styles.cardEnvelope}>
       <Pressable style={styles.card} onPress={() => toggleSelectExercise(item)}>
         {selectedExercises.some((e) => e.idEjercicio === item.idEjercicio) ? (
@@ -112,7 +151,13 @@ export default function ExerciseFeed() {
           <View style={styles.textContainer}>
             <Text style={styles.exerciseName}>{item.nombre}</Text>
             <Text style={styles.muscleGroup}>
-              Músculos: {item.musculos_principales.join(", ")}
+              Músculos:{" "}
+              {item.musculos_principales
+                .map((name) => {
+                  const conventional = getConventionalName(name);
+                  return `${conventional} (${name})`;
+                })
+                .join(", ")}
             </Text>
           </View>
         </View>
@@ -132,8 +177,22 @@ export default function ExerciseFeed() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.searchBarContainer}>
+        {loading ? (
+          <ActivityIndicator size="small" />
+        ) : (
+          <MaterialIcons name="search" size={24} style={styles.icon} />
+        )}
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search exercises in Atlas"
+          placeholderTextColor="#CDCDCD"
+          value={exerciseSearch}
+          onChangeText={setExerciseSearch}
+        />
+      </View>
       <FlatList
-        data={exercises}
+        data={exerciseSearch.trim().length > 2 ? results : exercises}
         renderItem={renderItem}
         keyExtractor={(item) => item.idEjercicio.toString()}
         onEndReached={() => fetchExercises(false)}
@@ -145,7 +204,16 @@ export default function ExerciseFeed() {
           />
         }
         contentContainerStyle={styles.scrollContainer}
+        ListEmptyComponent={
+          <View style={styles.noExerciseMessageContainer}>
+            <FontAwesome6 name="dumbbell" size={45} color={"grey"} />
+            <Text style={styles.noExercisesText}>
+              There were no matches with the given query
+            </Text>
+          </View>
+        }
       />
+
       {selectedExercises.length > 0 && (
         <View style={styles.footer}>
           <Pressable
@@ -191,6 +259,41 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
+  },
+  searchBarContainer: {
+    flexDirection: "row",
+    alignSelf: "center",
+    width: "98%",
+    marginTop: 8,
+    alignItems: "center",
+    height: 40,
+    borderColor: "#ccc",
+    backgroundColor: "grey",
+    borderWidth: 1,
+    borderRadius: 18,
+    paddingHorizontal: 10,
+  },
+  searchInput: {
+    height: 40,
+    flex: 1,
+    marginLeft: 10,
+    color: "white",
+    backgroundColor: "transparent",
+    underlineColorAndroid: "transparent",
+    outlineStyle: "none",
+  },
+  icon: {
+    color: "white",
+  },
+  noExerciseMessageContainer: {
+    paddingVertical: 20,
+    alignItems: "center",
+  },
+  noExercisesText: {
+    fontSize: 15,
+    marginBottom: 8,
+    marginTop: 12,
+    fontWeight: "bold",
   },
   image: {
     width: 48,

@@ -18,7 +18,7 @@ import { getUserAvatar } from "../../utils/avatar";
 import { Entypo, FontAwesome6 } from "react-native-vector-icons";
 import { ResumeWorkoutAS } from "../../utils/ResumeWorkoutAS";
 import { WorkoutTimeContext } from "../../context/WorkoutTimeContext";
-import { SessionCard } from "../SessionCard";
+import { SessionCard } from "../Cards/SessionCard";
 const LIMIT = 5;
 
 export default function ProfileFeedScreen() {

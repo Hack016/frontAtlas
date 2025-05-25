@@ -16,7 +16,7 @@ import { useRoute } from "@react-navigation/native";
 import { BASE_URL } from "../../../context/config";
 import { getUserAvatar } from "../../../utils/avatar";
 import { FontAwesome6 } from "react-native-vector-icons";
-import { SessionCard } from "../../SessionCard";
+import { SessionCard } from "../../Cards/SessionCard";
 import { UnfollowAlert } from "../../../utils/UnfollowAlert";
 
 const LIMIT = 5;

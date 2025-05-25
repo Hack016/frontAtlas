@@ -15,7 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../../../context/config";
 import { useFetchWithAuth } from "../../../utils/fetchWithAuth";
 import { useState } from "react";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { getUserAvatar } from "../../../utils/avatar";
 import { AuthContext } from "../../../context/AuthContext";
 import { UnfollowAlert } from "../../../utils/UnfollowAlert";
@@ -38,8 +38,7 @@ export default function SearchUsers() {
     const timeout = setTimeout(() => {
       if (username.trim().length > 1) {
         setLoading(true);
-        searchUsers(true);
-        setLoading(false);
+        searchUsers(true).finally(() => setLoading(false));
       } else {
         setResults([]);
       }
@@ -250,6 +249,14 @@ export default function SearchUsers() {
             onRefresh={() => searchUsers(true)}
           />
         }
+        ListEmptyComponent={
+          <View style={styles.noExerciseMessageContainer}>
+            <Ionicons name="people-circle-outline" size={45} color="grey" />
+            <Text style={styles.noExercisesText}>
+              There were no matches with the given query
+            </Text>
+          </View>
+        }
       />
 
       {loadingMore && <ActivityIndicator size="small" style={styles.icon} />}
@@ -333,6 +340,16 @@ const styles = StyleSheet.create({
   pendingButtonText: {
     color: "white",
     fontSize: 14,
+    fontWeight: "bold",
+  },
+  noExerciseMessageContainer: {
+    paddingVertical: 20,
+    alignItems: "center",
+  },
+  noExercisesText: {
+    fontSize: 15,
+    marginBottom: 8,
+    marginTop: 12,
     fontWeight: "bold",
   },
 });

@@ -1,13 +1,13 @@
 // components/SessionCard.js
 import React from "react";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
-import { getExerciseImageUrl, getUserAvatar } from "../utils/avatar";
+import { getExerciseImageUrl, getUserAvatar } from "../../utils/avatar";
 import { Ionicons, Fontisto } from "@expo/vector-icons";
-import { sharePost } from "../utils/branch";
-import { useFetchWithAuth } from "../utils/fetchWithAuth";
-import { BASE_URL } from "../context/config";
+import { sharePost } from "../../utils/branch";
+import { useFetchWithAuth } from "../../utils/fetchWithAuth";
+import { BASE_URL } from "../../context/config";
 import { useNavigation } from "@react-navigation/native";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 
 export const SessionCard = ({ item }) => {
   const { authTokens } = React.useContext(AuthContext);

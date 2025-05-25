@@ -6,7 +6,7 @@ import { WorkoutTrainContext } from "../../context/WorkoutTrainContext";
 import { useNavigation } from "@react-navigation/native";
 import { useFetchWithAuth } from "../../utils/fetchWithAuth";
 import { BASE_URL } from "../../context/config";
-import { ExerciseCard } from "../ExerciseCard";
+import { ExerciseCard } from "../Cards/ExerciseCard";
 import { Entypo, FontAwesome6 } from "@expo/vector-icons";
 import { WorkoutAlert } from "../../utils/workoutAlert";
 

@@ -14,7 +14,7 @@ import { ResumeWorkoutAS } from "../../utils/ResumeWorkoutAS";
 import { WorkoutTimeContext } from "../../context/WorkoutTimeContext";
 import { useFetchWithAuth } from "../../utils/fetchWithAuth";
 import { BASE_URL } from "../../context/config";
-import { SessionCard } from "../SessionCard";
+import { SessionCard } from "../Cards/SessionCard";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 const LIMIT = 5;

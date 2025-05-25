@@ -1,31 +1,59 @@
 import { View, Text, Image, StyleSheet, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { getExerciseImageUrl } from "../utils/avatar";
+import { getExerciseImageUrl } from "../../utils/avatar";
 
 export const ExerciseDisplayCard = ({ ejercicio }) => {
   const navigation = useNavigation();
   const series = ejercicio.series || [];
+  const isHistoryFormat = Boolean(ejercicio.ejercicio && ejercicio.series); // Verificar que formato de ejercicio es dependiendo si viene de sesiondetail o exercisedetail, castear a booleano
+
+  const nombreEjercicio = isHistoryFormat
+    ? ejercicio.ejercicio.nombre
+    : ejercicio.nombre;
+  const imagen = isHistoryFormat
+    ? ejercicio.ejercicio.imagen
+    : ejercicio.imagen;
 
   return (
     <View style={styles.card}>
+      {isHistoryFormat && (
+        <View style={styles.headerSession}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.headerButton,
+              pressed && { opacity: 0.6 },
+            ]}
+            onPress={() => {
+              navigation.navigate("Workout Detail", {
+                idSesion: ejercicio.idSesion,
+              });
+            }}
+          >
+            <Text style={styles.title}>{ejercicio.nombre}</Text>
+          </Pressable>
+          <Text style={styles.sessionDate}>
+            {new Date(ejercicio.fecha).toLocaleString()}
+          </Text>
+        </View>
+      )}
       <Pressable
         style={({ pressed }) => [
           styles.headerButton,
           pressed && { opacity: 0.6 },
         ]}
-        onPress={() =>
-          navigation.navigate("ExerciseDetail", {
-            idEjercicio: ejercicio.idEjercicio,
-            nombreEjercicio: ejercicio.nombre, // Le paso el nombre para que el titulo de la página sea el nombre del ejercicio
-          })
-        }
+        disabled={isHistoryFormat} // Deshabilitar si viene de exercisedetail
+        onPress={() => {
+          if (!isHistoryFormat) {
+            navigation.navigate("ExerciseDetail", {
+              idEjercicio: ejercicio.idEjercicio,
+              nombreEjercicio: ejercicio.nombre, // Le paso el nombre para que el titulo de la página sea el nombre del ejercicio
+            });
+          }
+        }}
       >
         <View style={styles.headerRow}>
-          <Image
-            source={getExerciseImageUrl(ejercicio.imagen)}
-            style={styles.image}
-          />
-          <Text style={styles.title}>{ejercicio.nombre}</Text>
+          <Image source={getExerciseImageUrl(imagen)} style={styles.image} />
+          <Text style={styles.title}>{nombreEjercicio}</Text>
         </View>
       </Pressable>
 
@@ -88,6 +116,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 12,
     paddingLeft: 16,
+  },
+  headerSession: {
+    marginTop: 12,
+    marginBottom: 12,
+    paddingLeft: 16,
+  },
+  sessionDate: {
+    fontSize: 14,
+    color: "gray",
   },
   headerSets: { flexDirection: "row", alignItems: "center", marginBottom: 12 },
   image: {

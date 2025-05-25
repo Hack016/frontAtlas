@@ -10,10 +10,11 @@ import {
 import { useFetchWithAuth } from "../../utils/fetchWithAuth";
 import { BASE_URL } from "../../context/config";
 import { useRoute } from "@react-navigation/native";
-import { ExerciseDisplayCard } from "../ExerciseDisplayCard";
+import { ExerciseDisplayCard } from "../Cards/ExerciseDisplayCard";
 import { getUserAvatar } from "../../utils/avatar";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../../context/AuthContext";
+import { getConventionalName } from "../../utils/musclename_converter";
 
 export const DetailedSessionScreen = () => {
   const fetchWithAuth = useFetchWithAuth();
@@ -98,7 +99,7 @@ export const DetailedSessionScreen = () => {
     { name, percent } //barra de porcentaje muscular
   ) => (
     <View style={{ marginBottom: 12 }}>
-      <Text style={styles.muscleText}>{name}</Text>
+      <Text style={styles.muscleText}>{getConventionalName(name)}</Text>
       <View style={styles.muscleBarContainer}>
         <View style={[styles.muscleBar, { width: `${percent}%` }]} />
         <Text style={styles.musclepercentage}>{percent}%</Text>
