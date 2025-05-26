@@ -90,8 +90,12 @@ export const ExerciseDisplayCard = ({ ejercicio }) => {
                   : idx + 1}
           </Text>
 
-          <Text style={styles.cell}>{s.peso}kg</Text>
-          <Text style={styles.cell}>{s.repeticiones}</Text>
+          <Text style={styles.cell}>
+            {s?.peso ? s.peso : s.peso_estimado}kg
+          </Text>
+          <Text style={styles.cell}>
+            {s?.repeticiones ? s.repeticiones : s.repeticiones_estimadas}
+          </Text>
         </View>
       ))}
     </View>

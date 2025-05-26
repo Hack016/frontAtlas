@@ -18,7 +18,7 @@ import { useState } from "react";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { getUserAvatar } from "../../../utils/avatar";
 import { AuthContext } from "../../../context/AuthContext";
-import { UnfollowAlert } from "../../../utils/UnfollowAlert";
+import { UnfollowAlert } from "../../../utils/Alerts/UnfollowAlert";
 const LIMIT = 20;
 
 export default function SearchUsers() {

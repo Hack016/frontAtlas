@@ -1,36 +1,52 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
-import { useContext, useState } from "react";
-import { WorkoutTimeContext } from "../../context/WorkoutTimeContext";
-import { WorkoutTrainContext } from "../../context/WorkoutTrainContext";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  TextInput,
+  Alert,
+} from "react-native";
+import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { useFetchWithAuth } from "../../utils/fetchWithAuth";
 import { BASE_URL } from "../../context/config";
-import { ExerciseCard } from "../Cards/ExerciseCard";
+import { ExerciseRoutineCard } from "../Cards/ExerciseRoutineCard";
 import { Entypo, FontAwesome6 } from "@expo/vector-icons";
-import { WorkoutAlert } from "../../utils/Alerts/workoutAlert";
+import { SaveRoutineAlert } from "../../utils/Alerts/SaveRoutineAlert";
+import { NameRoutineAlert } from "../../utils/Alerts/NameRoutineAlert";
+import { DiscardRoutineAlert } from "../../utils/Alerts/DiscardRoutineAlert";
 
-export const WorkoutSession = () => {
-  const [showAlert, setShowAlert] = useState(false);
+export const RoutinePost = () => {
+  const [showSaveAlert, setShowSaveAlert] = useState(false);
+  const [showNameAlert, setShowNameAlert] = useState(false);
+  const [showDiscardAlert, setShowDiscardAlert] = useState(false);
+  const [pendingNavigationEvent, setPendingNavigationEvent] = useState(null); // Variable para almacenar el evento de navegación pendiente
+  const [isSavingAndExiting, setIsSavingAndExiting] = useState(false); // Variable para ignorar la navegación pendiente
+
+  const [nombre, setNombre] = useState("");
+  const [descripcion, setDescripcion] = useState("");
   const navigation = useNavigation();
-  const route = useRoute();
-  const rutina = route.params?.rutina;
   const fetchWithAuth = useFetchWithAuth();
-  const {
-    volume,
-    sets,
-    setVolume,
-    setSets,
-    selectedExercises,
-    setSelectedExercises,
-    setExercises,
-    exercises,
-    exerciseProgress,
-    setExerciseProgress,
-    resetWorkout,
-  } = useContext(WorkoutTrainContext);
-  const { seconds, setIsWorkoutActive, resetWorkoutTime } =
-    useContext(WorkoutTimeContext);
+  const [sets, setSets] = useState(0);
+  const [selectedExercises, setSelectedExercises] = useState([]);
+  const [exercises, setExercises] = useState([]);
+  const [exerciseProgress, setExerciseProgress] = useState({});
+  const hasAnyExercise = Object.values(exerciseProgress).some(
+    (seriesList) => seriesList.length > 0
+  );
+
+  useEffect(() => {
+    const unsub = navigation.addListener("beforeRemove", (e) => {
+      if (isSavingAndExiting) return;
+      e.preventDefault(); // detener la salida por defecto
+      setPendingNavigationEvent(e);
+      setShowDiscardAlert(true);
+    });
+
+    return unsub;
+  }, [navigation, isSavingAndExiting]);
 
   const fetchExercises = async () => {
     try {
@@ -51,19 +67,23 @@ export const WorkoutSession = () => {
         );
 
         setExercises(ordered);
+
         const initialProgress = { ...exerciseProgress }; // conservar lo que ya hay
         data.forEach((ej) => {
           if (!initialProgress[ej.idEjercicio]) {
             const seriesAnt = ej.ultima_sesion?.series || [];
             initialProgress[ej.idEjercicio] =
               seriesAnt.length > 0
-                ? seriesAnt.map((s) => ({ ...s, checked: false }))
+                ? seriesAnt.map(({ tipo, peso, repeticiones }) => ({
+                    tipo,
+                    peso,
+                    repeticiones,
+                  }))
                 : [
                     {
                       tipo: "normal",
                       peso: 0,
                       repeticiones: 0,
-                      checked: false,
                     },
                   ];
           }
@@ -77,88 +97,109 @@ export const WorkoutSession = () => {
     }
   };
 
+  const handleSaveWorkout = async () => {
+    const cleanedProgress = {}; //Porque en el backend los atributos peso y repeticiones los llamo así
+    Object.entries(exerciseProgress).forEach(([id, series]) => {
+      cleanedProgress[id] = series.map(({ tipo, peso, repeticiones }) => ({
+        tipo,
+        peso_estimado: peso,
+        repeticiones_estimadas: repeticiones,
+      }));
+    });
+    const payload = {
+      nombre,
+      ejercicios: cleanedProgress,
+    };
+
+    try {
+      const response = await fetchWithAuth(`${BASE_URL}api/createroutine/`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        setIsSavingAndExiting(true);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" }],
+        });
+      } else {
+        const errorData = await response.json();
+        console.log("Save error details:", errorData);
+
+        Alert.alert("Error", errorData.error || "Something went wrong.");
+      }
+    } catch (error) {
+      console.error("Save failed", error);
+      Alert.alert("Error", "Network error.");
+    }
+  };
+
   useEffect(() => {
-    setIsWorkoutActive(true); // activa al entrar
     if (selectedExercises.length > 0) {
       fetchExercises();
     }
   }, [selectedExercises]);
 
-  useEffect(() => {
-    let totalVolume = 0;
-    let totalSets = 0;
-
-    Object.values(exerciseProgress).forEach((seriesList) => {
-      seriesList.forEach((s) => {
-        if (s.checked) {
-          totalVolume += s.peso * s.repeticiones;
-          totalSets += 1;
-        }
-      });
-    });
-
-    setVolume(totalVolume);
-    setSets(totalSets);
-  }, [exerciseProgress]);
-
-  useEffect(() => {
-    if (rutina) {
-      const ejercicioIds = rutina.ejercicios.map((ej) => ej.idEjercicio);
-      setSelectedExercises(ejercicioIds);
-      setExercises(rutina.ejercicios);
-
-      const progresoInicial = {};
-      rutina.ejercicios.forEach((ej) => {
-        progresoInicial[ej.idEjercicio] = ej.series.map((s) => ({
-          tipo: s.tipo,
-          peso: s.peso_estimado,
-          repeticiones: s.repeticiones_estimadas,
-          checked: false,
-        }));
-      });
-      setExerciseProgress(progresoInicial);
-    }
-  }, [rutina]);
-
-  const formatTime = (secs) => {
-    const m = Math.floor(secs / 60) % 60;
-    const h = Math.floor(m / 60);
-    const s = secs % 60;
-    return `${h}:${m < 10 ? "0" : ""}${m}:${s < 10 ? "0" : ""}${s}`;
-  };
-
   return (
     <View style={styles.container}>
-      <WorkoutAlert
-        visible={showAlert}
-        onCancel={() => setShowAlert(false)}
-        onDiscard={() => {
-          resetWorkout();
-          resetWorkoutTime();
-          setShowAlert(false);
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "Home" }],
-          });
+      <SaveRoutineAlert
+        visible={showSaveAlert}
+        onCancel={() => setShowSaveAlert(false)}
+        onPost={() => {
+          setShowSaveAlert(false);
+          handleSaveWorkout();
         }}
       />
-      <View style={styles.headerContainer}>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoText}>Duration</Text>
-          <Text style={styles.infoText}>Volume</Text>
-          <Text style={styles.infoText}>Sets</Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoData}>{formatTime(seconds)}</Text>
-          <Text style={styles.infoData}>{volume} kg</Text>
-          <Text style={styles.infoData}>{sets}</Text>
-        </View>
-      </View>
+      <NameRoutineAlert
+        visible={showNameAlert}
+        onCancel={() => setShowNameAlert(false)}
+      />
+      <DiscardRoutineAlert
+        visible={showDiscardAlert}
+        onCancel={() => setShowDiscardAlert(false)}
+        onDiscard={() => {
+          if (pendingNavigationEvent) {
+            navigation.dispatch(pendingNavigationEvent.data.action);
+          }
+          setShowDiscardAlert(false);
+          setPendingNavigationEvent(null); // limpiar
+        }}
+      />
 
       {selectedExercises?.length > 0 ? (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Routine title"
+            placeholderTextColor="grey"
+            value={nombre}
+            onChangeText={setNombre}
+          />
           {exercises.map((ejercicio, index) => (
-            <ExerciseCard key={ejercicio.idEjercicio} ejercicio={ejercicio} /> //llamo a exerciseCard para no meter todo el código aquí
+            <ExerciseRoutineCard
+              key={ejercicio.idEjercicio}
+              ejercicio={ejercicio}
+              progreso={exerciseProgress[ejercicio.idEjercicio] || []}
+              onUpdate={(newSeries) =>
+                setExerciseProgress((prev) => ({
+                  //actualizar el progreso de la rutina
+                  ...prev,
+                  [ejercicio.idEjercicio]: newSeries,
+                }))
+              }
+              onRemove={() => {
+                setExerciseProgress((prev) => {
+                  //eliminar un ejercicio de la rutina. Se utilizan funciones callBack porque ahora no uso context
+                  const updated = { ...prev };
+                  delete updated[ejercicio.idEjercicio];
+                  return updated;
+                });
+                setSelectedExercises((prev) =>
+                  prev.filter((id) => id !== ejercicio.idEjercicio)
+                );
+              }}
+            />
           ))}
           <View style={styles.buttonContainer}>
             <Pressable
@@ -189,48 +230,47 @@ export const WorkoutSession = () => {
                   styles.buttonPost,
                   pressed && { opacity: 0.6 },
                 ]}
-                onPress={() =>
-                  navigation.navigate("WorkoutPost", { seconds: seconds })
-                }
+                onPress={() => {
+                  if (nombre.trim().length > 0) {
+                    setShowSaveAlert(true);
+                  } else {
+                    setShowNameAlert(true);
+                  }
+                }}
                 disabled={
-                  !Object.values(exerciseProgress).some((seriesList) =>
-                    seriesList.some((s) => s.checked)
-                  ) // mirar si hay algun dato guardado en el exerciseProgress. Si lo hay ya se puede publicar y se activa el botón
+                  !hasAnyExercise // mirar si hay algún ejercicio añadido
                 }
               >
                 <Text
                   style={[
                     styles.buttonTextPost,
                     {
-                      color: !Object.values(exerciseProgress).some(
-                        (seriesList) => seriesList.some((s) => s.checked)
-                      )
-                        ? "grey"
-                        : "#2196F3",
+                      color: !hasAnyExercise ? "grey" : "#2196F3",
                     },
                   ]}
                 >
-                  Save workout
+                  Save routine
                 </Text>
-              </Pressable>
-              <Pressable
-                style={styles.buttonDelete}
-                onPress={() => setShowAlert(true)}
-              >
-                <Text style={styles.buttonTextDelete}>Discard Workout</Text>
               </Pressable>
             </View>
           </View>
         </ScrollView>
       ) : (
         <View style={styles.noExerciseContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Routine title"
+            placeholderTextColor="grey"
+            value={nombre}
+            onChangeText={setNombre}
+          />
           <View style={styles.noExerciseMessageContainer}>
             <FontAwesome6 name="dumbbell" size={45} color={"grey"} />
             <Text style={styles.noExercisesText}>
-              Every great session begins with a single lift
+              Consistency is the true weight we carry
             </Text>
             <Text style={styles.noExercisesText2}>
-              Add an exercise to start your workout
+              Add an exercise to get started
             </Text>
           </View>
           <View style={styles.buttonContainer}>
@@ -256,12 +296,6 @@ export const WorkoutSession = () => {
                 <Text style={styles.buttonText}>Add Exercise</Text>
               </View>
             </Pressable>
-            <Pressable
-              style={styles.buttonDeleteWOFlex}
-              onPress={() => setShowAlert(true)}
-            >
-              <Text style={styles.buttonTextDelete}>Discard Workout</Text>
-            </Pressable>
           </View>
         </View>
       )}
@@ -275,6 +309,16 @@ const styles = StyleSheet.create({
   },
   noExerciseContainer: {
     paddingVertical: 20,
+  },
+  input: {
+    alignSelf: "center",
+    width: "90%",
+    color: "black",
+    borderBottomWidth: 1,
+    borderBottomColor: "#444",
+    marginBottom: 24,
+    marginTop: 12,
+    fontSize: 16,
   },
   noExerciseMessageContainer: {
     paddingVertical: 20,

@@ -39,38 +39,14 @@ import VisitFollowed from "./components/screens/socialNetwork/VisitFollowed";
 import CommentSection from "./components/screens/socialNetwork/CommentPage";
 import Likes from "./components/screens/socialNetwork/Likes";
 // import branch from "react-native-branch";
-import { useEffect } from "react";
 import { DetailedSessionScreen } from "./components/screens/DetailedSession";
+import { RoutinePost } from "./components/screens/RoutinePost";
+import { DetailedRoutineScreen } from "./components/screens/DetailedRoutine";
 
 const Stack = createNativeStackNavigator();
 
 const AppContent = () => {
   const { authTokens, loading } = useContext(AuthContext);
-
-  // useEffect(() => {
-  //   branch.subscribe(({ error, params }) => {
-  //     if (error) {
-  //       console.error("Branch error:", error);
-  //       return;
-  //     }
-
-  //     if (params && params["+clicked_branch_link"]) {
-  //       const idEjercicio = params.idEjercicio;
-  //       if (idEjercicio) {
-  //         // navegar a la pantalla de detalle
-  //       }
-  //     }
-  //   });
-  // }, []);
-  const linking = {
-    prefixes: ["https://atlastracker.app.link", "atlastracker://"],
-    config: {
-      screens: {
-        ExerciseDetail: "exerciseDetail/:idEjercicio",
-        Post: "post/:postId", // Ajusta si usas otro nombre de screen
-      },
-    },
-  };
 
   if (loading) {
     return (
@@ -143,6 +119,11 @@ const AppContent = () => {
                 <Stack.Screen
                   name="Workout Session"
                   component={WorkoutSession}
+                />
+                <Stack.Screen name="Create Routine" component={RoutinePost} />
+                <Stack.Screen
+                  name="Routine"
+                  component={DetailedRoutineScreen}
                 />
                 <Stack.Screen name="Exercise Feed" component={ExerciseFeed} />
                 <Stack.Screen name="SearchUsers" component={SearchUsers} />

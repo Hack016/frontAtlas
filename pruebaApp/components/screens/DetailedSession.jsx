@@ -177,7 +177,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    padding: 16,
   },
   sessionCard: {
     backgroundColor: "white",
@@ -251,6 +250,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: "grey",
     marginBottom: 20,
+    marginLeft: 16,
   },
   muscleBar: {
     height: "100%",

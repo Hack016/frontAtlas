@@ -17,7 +17,7 @@ import { useRoute } from "@react-navigation/native";
 import { WorkoutTrainContext } from "../../context/WorkoutTrainContext";
 import { WorkoutTimeContext } from "../../context/WorkoutTimeContext";
 import Modal from "react-native-modal";
-import { WorkoutAlert } from "../../utils/workoutAlert";
+import { WorkoutAlert } from "../../utils/Alerts/workoutAlert";
 import { useNavigation } from "@react-navigation/native";
 
 export default function WorkoutPost() {

@@ -1,10 +1,11 @@
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, FlatList, RefreshControl } from "react-native";
+import { StyleSheet, FlatList, RefreshControl, View, Text } from "react-native";
 import { useFetchWithAuth } from "../../utils/fetchWithAuth";
 import { ExerciseDisplayCard } from "../Cards/ExerciseDisplayCard";
 import { useRoute } from "@react-navigation/native";
 import { BASE_URL } from "../../context/config";
+import { Entypo } from "react-native-vector-icons";
 const LIMIT = 5;
 
 export default function HistoryExerciseScreen() {
@@ -38,10 +39,6 @@ export default function HistoryExerciseScreen() {
       );
 
       const data = await response.json();
-      // const raw = await response.text();
-      // console.log("🧪 RAW:", raw); // esto debería mostrar el JSON completo
-      // const data = JSON.parse(raw);
-      // setSessions(data.results);
 
       if (response.ok) {
         if (initial) {
@@ -83,16 +80,6 @@ export default function HistoryExerciseScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {/* <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={fetchSessions} /> // RefresControl es para deslizar hacia abajo y recargar
-        }
-      >
-        {sessions.map((item) => (
-          <ExerciseDisplayCard key={item.idSesion} ejercicio={item} />
-        ))}
-      </ScrollView> */}
       <FlatList
         data={sessions}
         renderItem={({ item }) => (
@@ -107,6 +94,15 @@ export default function HistoryExerciseScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         contentContainerStyle={{ paddingBottom: 20 }}
+        ListEmptyComponent={
+          <View style={styles.noExerciseMessageContainer}>
+            <Entypo name="back-in-time" size={45} color={"grey"} />
+            <Text style={styles.noExercisesText}>No exercise history yet</Text>
+            <Text style={styles.noExercisesText2}>
+              Log a workout with this exercise and see your history here
+            </Text>
+          </View>
+        }
       />
     </SafeAreaView>
   );
@@ -159,5 +155,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#777",
     marginRight: 8,
+  },
+  noExerciseMessageContainer: {
+    paddingVertical: 20,
+    alignItems: "center",
+  },
+  noExercisesText: {
+    fontSize: 15,
+    marginBottom: 8,
+    marginTop: 12,
+    fontWeight: "bold",
+  },
+  noExercisesText2: {
+    color: "grey",
+    fontSize: 13,
+    marginBottom: 12,
   },
 });

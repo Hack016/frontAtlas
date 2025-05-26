@@ -17,7 +17,7 @@ import { BASE_URL } from "../../../context/config";
 import { getUserAvatar } from "../../../utils/avatar";
 import { FontAwesome6 } from "react-native-vector-icons";
 import { SessionCard } from "../../Cards/SessionCard";
-import { UnfollowAlert } from "../../../utils/UnfollowAlert";
+import { UnfollowAlert } from "../../../utils/Alerts/UnfollowAlert";
 
 const LIMIT = 5;
 

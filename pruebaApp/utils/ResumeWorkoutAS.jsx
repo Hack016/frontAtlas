@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { WorkoutTimeContext } from "../context/WorkoutTimeContext";
 import { WorkoutTrainContext } from "../context/WorkoutTrainContext";
 import { Entypo } from "react-native-vector-icons";
-import { WorkoutAlert } from "../utils/workoutAlert";
+import { WorkoutAlert } from "./Alerts/workoutAlert";
 import { useState } from "react";
 
 export const ResumeWorkoutAS = () => {

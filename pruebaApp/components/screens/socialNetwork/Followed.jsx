@@ -17,7 +17,7 @@ import { useState } from "react";
 import { getUserAvatar } from "../../../utils/avatar";
 import { Ionicons, Entypo } from "@expo/vector-icons";
 import { AuthContext } from "../../../context/AuthContext";
-import { UnfollowAlert } from "../../../utils/UnfollowAlert";
+import { UnfollowAlert } from "../../../utils/Alerts/UnfollowAlert";
 const LIMIT = 20;
 
 export default function Followed() {
