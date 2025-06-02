@@ -5,6 +5,7 @@ import {
   Pressable,
   StyleSheet,
   ActivityIndicator,
+  View,
 } from "react-native";
 import { Entypo, EvilIcons } from "react-native-vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -14,7 +15,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { WorkoutTimeContext } from "../../context/WorkoutTimeContext";
 import { useFetchWithAuth } from "../../utils/fetchWithAuth";
 import { BASE_URL } from "../../context/config";
-import { View } from "react-native-web";
 import { DeleteRoutineAlert } from "../../utils/Alerts/DeleteRoutineAlert";
 
 export default function TrainScreen() {

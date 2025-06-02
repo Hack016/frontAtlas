@@ -2,19 +2,24 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { getExerciseImageUrl, getUserAvatar } from "../../utils/avatar";
-import { Ionicons, Fontisto } from "@expo/vector-icons";
+import { Ionicons, Fontisto, Entypo, Feather } from "@expo/vector-icons";
 import { sharePost } from "../../utils/branch";
 import { useFetchWithAuth } from "../../utils/fetchWithAuth";
 import { BASE_URL } from "../../context/config";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../../context/AuthContext";
+import Modal from "react-native-modal";
+import { DeleteSessionAlert } from "../../utils/Alerts/DeleteSessionAlert";
 
-export const SessionCard = ({ item }) => {
+export const SessionCard = ({ item, onDeleteSession }) => {
   const { authTokens } = React.useContext(AuthContext);
   const fetchWithAuth = useFetchWithAuth();
   const navigation = useNavigation();
   const [liked, setLiked] = React.useState(item.liked);
   const [likesCount, setLikesCount] = React.useState(item.likes);
+  const [isExerciseDotsVisible, setIsExerciseDotsVisible] =
+    React.useState(false);
+  const [showAlert, setShowAlert] = React.useState(false);
 
   const handleLike = async () => {
     try {
@@ -53,6 +58,27 @@ export const SessionCard = ({ item }) => {
       console.error("Error sending like", error);
     }
   };
+
+  const handleDeleteSession = async (idSesion) => {
+    try {
+      const response = await fetchWithAuth(
+        `${BASE_URL}api/deleteSession/${encodeURIComponent(idSesion)}/`,
+        {
+          method: "DELETE",
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        onDeleteSession?.(idSesion); //Actualizo la lista local a trabés del prop onDelete porque no puedo acceder a la lista local desde el Card
+        return { success: true, data };
+      } else {
+        return { success: false, error: data.error || "Server not available" };
+      }
+    } catch (error) {
+      return { success: false, error };
+    }
+  };
+
   return (
     <Pressable
       style={styles.sessionCard}
@@ -61,28 +87,89 @@ export const SessionCard = ({ item }) => {
       }
     >
       {/* Nombre de usuario con fecha de la sesión y foto de perfil  */}
-      <Pressable
-        style={styles.userHeader}
-        onPress={() => {
-          if (item.usuario.username === authTokens.username)
-            navigation.navigate("Profile", {
-              showHeaderButtons: false,
-            });
-          else
-            navigation.navigate("VisitProfile", {
-              username: item.usuario.username,
-              follow_status: item.usuario.follow_status,
-            });
+      <View style={styles.userHeaderContainer}>
+        <Pressable
+          style={styles.userHeader}
+          onPress={() => {
+            if (item.usuario.username === authTokens.username)
+              navigation.navigate("Profile", { showHeaderButtons: false });
+            else
+              navigation.navigate("VisitProfile", {
+                username: item.usuario.username,
+                follow_status: item.usuario.follow_status,
+              });
+          }}
+        >
+          <Image source={getUserAvatar(item.usuario)} style={styles.image} />
+          <View>
+            <Text style={styles.userSession}>{item.usuario.username}</Text>
+            <Text style={styles.sessionDate}>
+              {new Date(item.fecha).toLocaleString()}
+            </Text>
+          </View>
+        </Pressable>
+        {item.usuario.username === authTokens.username && (
+          <Pressable onPress={() => setIsExerciseDotsVisible(true)}>
+            <Entypo name="dots-three-horizontal" size={18} />
+          </Pressable>
+        )}
+      </View>
+      <DeleteSessionAlert
+        visible={showAlert}
+        onCancel={() => setShowAlert(false)}
+        onDiscard={() => {
+          handleDeleteSession(item.idSesion);
+          setShowAlert(false);
         }}
+      />
+      <Modal
+        isVisible={isExerciseDotsVisible}
+        onBackdropPress={() => setIsExerciseDotsVisible(false)}
+        style={{ justifyContent: "flex-end", margin: 0 }}
       >
-        <Image source={getUserAvatar(item.usuario)} style={styles.image} />
-        <View>
-          <Text style={styles.userSession}>{item.usuario.username}</Text>
-          <Text style={styles.sessionDate}>
-            {new Date(item.fecha).toLocaleString()}
-          </Text>
+        <View style={styles.modalContent}>
+          <View style={styles.modalOptions}>
+            {[
+              {
+                label: "Delete Session",
+                icon: "x",
+                destructive: true,
+                onPress: () => {
+                  setShowAlert(true);
+                  setIsExerciseDotsVisible(false);
+                },
+              },
+            ].map((item, index) => (
+              <Pressable
+                key={index}
+                style={[styles.modalOptionRow, item.destructive]}
+                onPress={() => {
+                  item.onPress();
+                  setIsExerciseDotsVisible(false);
+                }}
+              >
+                <View style={styles.modalOptionInner}>
+                  <Feather
+                    name={item.icon}
+                    size={20}
+                    color={item.destructive ? "#FF3B30" : "#FFF"}
+                    style={styles.modalOptionIcon}
+                  />
+
+                  <Text
+                    style={[
+                      styles.modalOptionText,
+                      item.destructive && { color: "#FF3B30" },
+                    ]}
+                  >
+                    {item.label}
+                  </Text>
+                </View>
+              </Pressable>
+            ))}
+          </View>
         </View>
-      </Pressable>
+      </Modal>
       {/* Información de la sesión */}
       <Text style={styles.sessionTitle}>{item.nombre}</Text>
 
@@ -169,9 +256,10 @@ export const SessionCard = ({ item }) => {
         >
           <Fontisto name="comment" size={24} color="black" />
         </Pressable>
-        <Pressable style={styles.button} onPress={() => sharePost("192")}>
+        {/* Implementación futura de share para compartir post en otras apps */}
+        {/* <Pressable style={styles.button} onPress={() => sharePost("192")}>
           <Ionicons name="share-social-outline" size={24} color="black" />
-        </Pressable>
+        </Pressable> */}
       </View>
     </Pressable>
   );
@@ -185,6 +273,12 @@ const styles = StyleSheet.create({
   },
   userHeader: {
     flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  userHeaderContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 10,
   },
@@ -252,5 +346,34 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+  },
+  modalContent: {
+    backgroundColor: "#63666A",
+    padding: 16,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  modalOptions: {
+    color: "white",
+    fontSize: 30,
+    marginBottom: 8,
+  },
+  modalOptionText: {
+    color: "white",
+    fontSize: 14,
+  },
+  modalOptionRow: {
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderWidth: 0.5,
+    borderColor: "#3a3a3c",
+    borderRadius: 8,
+  },
+  modalOptionInner: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  modalOptionIcon: {
+    marginRight: 16,
   },
 });

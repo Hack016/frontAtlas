@@ -105,6 +105,10 @@ export default function ProfileFeedScreen() {
     }
   };
 
+  const handleDeleteLocalSession = (idSesion) => {
+    setSessionsData((prev) => prev.filter((s) => s.idSesion !== idSesion));
+  };
+
   const onRefresh = async () => {
     setRefreshing(true);
     await Promise.all([fetchProfileData(), fetchSessionsData(true)]);
@@ -164,7 +168,9 @@ export default function ProfileFeedScreen() {
     );
   }
 
-  const renderSessionItem = ({ item }) => <SessionCard item={item} />;
+  const renderSessionItem = ({ item }) => (
+    <SessionCard item={item} onDeleteSession={handleDeleteLocalSession} />
+  );
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -222,7 +228,7 @@ export default function ProfileFeedScreen() {
             <View style={styles.dashboardRow}>
               <Pressable
                 style={styles.dashboardButton}
-                onPress={() => console.log("Statistics")}
+                onPress={() => navigation.navigate("Statistics")}
               >
                 <FontAwesome6
                   style={styles.dashboardButtonIcon}
@@ -243,7 +249,8 @@ export default function ProfileFeedScreen() {
                 <Text style={styles.dashboardButtonTitle}>Exercises</Text>
               </Pressable>
             </View>
-            <View style={styles.dashboardRow}>
+            {/* Botones para futuras implementaciones */}
+            {/* <View style={styles.dashboardRow}>
               <Pressable
                 style={styles.dashboardButton}
                 onPress={() => console.log("Graphs")}
@@ -266,7 +273,7 @@ export default function ProfileFeedScreen() {
                 />
                 <Text style={styles.dashboardButtonTitle}>Calendar</Text>
               </Pressable>
-            </View>
+            </View> */}
             <Text style={styles.sesionesTitulo}>Workouts</Text>
           </View>
         }

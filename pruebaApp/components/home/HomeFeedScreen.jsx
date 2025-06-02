@@ -77,6 +77,11 @@ export default function HomeFeedScreen() {
       setRefreshing(false);
     }
   };
+
+  const handleDeleteLocalSession = (idSesion) => {
+    setSessionsData((prev) => prev.filter((s) => s.idSesion !== idSesion));
+  };
+
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchSessionsData(true);
@@ -111,7 +116,9 @@ export default function HomeFeedScreen() {
     );
   }
 
-  const renderSessionItem = ({ item }) => <SessionCard item={item} />;
+  const renderSessionItem = ({ item }) => (
+    <SessionCard item={item} onDeleteSession={handleDeleteLocalSession} />
+  );
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

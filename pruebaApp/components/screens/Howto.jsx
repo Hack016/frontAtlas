@@ -7,10 +7,10 @@ import {
   Image,
   View,
   FlatList,
+  Dimensions,
 } from "react-native";
 import { useFetchWithAuth } from "../../utils/fetchWithAuth";
 import { useRoute } from "@react-navigation/native";
-import { Dimensions } from "react-native";
 import { BASE_URL } from "../../context/config";
 import { getExerciseImageUrl } from "../../utils/avatar";
 
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   title: {
-    fontSize: 26,
+    fontSize: 20,
     fontWeight: "bold",
     paddingHorizontal: 15,
     paddingTop: 20,

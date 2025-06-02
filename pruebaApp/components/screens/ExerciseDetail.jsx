@@ -10,7 +10,12 @@ const ExerciseDetail = () => {
   const { params } = useRoute();
 
   return (
-    <Tab.Navigator screenOptions={{ swipeEnabled: false }}>
+    <Tab.Navigator screenOptions={{ swipeEnabled: true }}>
+      <Tab.Screen
+        name="Summary"
+        component={Summary}
+        initialParams={{ idEjercicio: params?.idEjercicio }}
+      />
       <Tab.Screen
         name="History"
         component={History}
@@ -19,11 +24,6 @@ const ExerciseDetail = () => {
       <Tab.Screen
         name="How to"
         component={HowTo}
-        initialParams={{ idEjercicio: params?.idEjercicio }}
-      />
-      <Tab.Screen
-        name="Summary"
-        component={Summary}
         initialParams={{ idEjercicio: params?.idEjercicio }}
       />
     </Tab.Navigator>

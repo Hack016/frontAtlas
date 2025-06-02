@@ -42,6 +42,7 @@ import Likes from "./components/screens/socialNetwork/Likes";
 import { DetailedSessionScreen } from "./components/screens/DetailedSession";
 import { RoutinePost } from "./components/screens/RoutinePost";
 import { DetailedRoutineScreen } from "./components/screens/DetailedRoutine";
+import StatsScreen from "./components/screens/StatsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -136,6 +137,7 @@ const AppContent = () => {
                   name="Workout Detail"
                   component={DetailedSessionScreen}
                 />
+                <Stack.Screen name="Statistics" component={StatsScreen} />
               </>
             ) : (
               <>

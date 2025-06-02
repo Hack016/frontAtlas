@@ -8,27 +8,23 @@ import {
   StyleSheet,
   Dimensions,
 } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { signInWithGoogle } from "../components/Signin";
+// import { signInWithGoogle } from "../components/Signin";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
 export const LoginScreen = ({ navigation }) => {
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(null);
+  // async function handleGoogleLogin() {
+  //   setLoading(true);
+  //   const result = await signInWithGoogle();
+  //   setLoading(false);
 
-  async function handleGoogleLogin() {
-    setLoading(true);
-    const result = await signInWithGoogle();
-    setLoading(false);
-
-    if (result.success) {
-      setMessage(JSON.stringify(result.data, null, 2));
-    } else {
-      setMessage(`Error: ${JSON.stringify(result.error, null, 2)}`);
-    }
-  }
+  //   if (result.success) {
+  //     setMessage(JSON.stringify(result.data, null, 2));
+  //   } else {
+  //     setMessage(`Error: ${JSON.stringify(result.error, null, 2)}`);
+  //   }
+  // }
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -67,7 +63,7 @@ export const LoginScreen = ({ navigation }) => {
             <Text style={styles.buttonText}>Register</Text>
           </Pressable>
 
-          <Pressable
+          {/* <Pressable
             style={({ pressed }) =>
               pressed
                 ? { ...styles.googleButton, opacity: 0.5 }
@@ -88,14 +84,8 @@ export const LoginScreen = ({ navigation }) => {
                 <Text style={styles.buttonText}>Log in with Google</Text>
               </>
             )}
-          </Pressable>
+          </Pressable> */}
         </View>
-        {/*Mensaje de éxito o error */}
-        {message && (
-          <View style={{ marginTop: 20 }}>
-            <Text>{message}</Text>
-          </View>
-        )}
       </ScrollView>
     </SafeAreaView>
   );

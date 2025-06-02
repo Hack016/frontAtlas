@@ -119,10 +119,13 @@ export const RoutinePost = () => {
 
       if (response.ok) {
         setIsSavingAndExiting(true);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "Home" }],
-        });
+        setTimeout(() => {
+          // Meter setTimeout para darle tiempo al setIsSavingAndExiting a ponerse a true
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Home" }],
+          });
+        }, 0);
       } else {
         const errorData = await response.json();
         console.log("Save error details:", errorData);

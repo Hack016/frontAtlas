@@ -35,14 +35,14 @@ export const AccountSettings = () => {
         </View>
         <Entypo name="chevron-right" size={24} />
       </Pressable>
-      <Pressable style={styles.card} onPress={() => console.log("Theme")}>
+      {/* <Pressable style={styles.card} onPress={() => console.log("Theme")}>
         <View style={styles.rowCard}>
           <Entypo name="moon" size={24} />
           <Text style={styles.text}>Update password</Text>
         </View>
         <Entypo name="chevron-right" size={24} />
-      </Pressable>
-      <Pressable
+      </Pressable> */}
+      {/* <Pressable
         style={({ pressed }) =>
           pressed
             ? { ...styles.logoutButton, opacity: 0.5 }
@@ -51,7 +51,7 @@ export const AccountSettings = () => {
         onPress={() => logout()}
       >
         <Text style={[styles.text, { color: "white" }]}>Delete account</Text>
-      </Pressable>
+      </Pressable> */}
     </ScrollView>
   );
 };

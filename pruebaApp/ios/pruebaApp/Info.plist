@@ -2,17 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
-    <key>branch_key</key>
-    <dict>
-      <key>live</key>
-      <string>key_live_fBwgkRNXfWxA3ETtM8MtwppoFqf2JO8T</string>
-    </dict>
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>pruebaApp</string>
+    <string>Atlas</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -32,13 +27,14 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>atlastracker</string>
           <string>com.hack0.pruebaApp</string>
         </array>
       </dict>
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>exp+pruebaapp</string>
+          <string>exp+atlas</string>
         </array>
       </dict>
     </array>
@@ -55,6 +51,12 @@
       <key>NSAllowsLocalNetworking</key>
       <true/>
     </dict>
+    <key>NSCameraUsageDescription</key>
+    <string>Allow $(PRODUCT_NAME) to access your camera</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Allow $(PRODUCT_NAME) to access your microphone</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Allow $(PRODUCT_NAME) to access your photos</string>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>
@@ -81,5 +83,10 @@
     <string>Light</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
+    <key>branch_key</key>
+    <dict>
+      <key>live</key>
+      <string>key_live_fBwgkRNXfWxA3ETtM8MtwppoFqf2JO8T</string>
+    </dict>
   </dict>
 </plist>
