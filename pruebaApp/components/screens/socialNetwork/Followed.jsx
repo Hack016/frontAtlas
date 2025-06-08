@@ -118,7 +118,11 @@ export default function Followed() {
       <View style={styles.buttonRow}>
         <Pressable
           onPress={() => setSelectedUser(item)}
-          style={styles.followButton}
+          style={({ pressed }) => [
+            pressed
+              ? { ...styles.followButton, opacity: 0.5 }
+              : styles.followButton,
+          ]}
         >
           <Text style={styles.followButtonText}>UnFollow</Text>
         </Pressable>

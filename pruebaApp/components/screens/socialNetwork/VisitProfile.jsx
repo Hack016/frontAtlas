@@ -272,21 +272,33 @@ export default function VisitProfile() {
         {follow_state === "following" ? (
           <Pressable
             onPress={() => setSelectedUser(profileData.usuario)}
-            style={styles.followButton}
+            style={({ pressed }) => [
+              pressed
+                ? { ...styles.followButton, opacity: 0.5 }
+                : styles.followButton,
+            ]}
           >
             <Text style={styles.followButtonText}>UnFollow</Text>
           </Pressable>
         ) : follow_state === "requested" ? (
           <Pressable
             onPress={() => handlePending(username)}
-            style={styles.pendingButton}
+            style={({ pressed }) => [
+              pressed
+                ? { ...styles.pendingButton, opacity: 0.5 }
+                : styles.pendingButton,
+            ]}
           >
             <Text style={styles.pendingButtonText}>Requested</Text>
           </Pressable>
         ) : (
           <Pressable
             onPress={() => handleFollow(username)}
-            style={styles.followButton}
+            style={({ pressed }) => [
+              pressed
+                ? { ...styles.followButton, opacity: 0.5 }
+                : styles.followButton,
+            ]}
           >
             <Text style={styles.followButtonText}>Follow</Text>
           </Pressable>

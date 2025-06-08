@@ -26,10 +26,8 @@ export const RoutinePost = () => {
   const [isSavingAndExiting, setIsSavingAndExiting] = useState(false); // Variable para ignorar la navegación pendiente
 
   const [nombre, setNombre] = useState("");
-  const [descripcion, setDescripcion] = useState("");
   const navigation = useNavigation();
   const fetchWithAuth = useFetchWithAuth();
-  const [sets, setSets] = useState(0);
   const [selectedExercises, setSelectedExercises] = useState([]);
   const [exercises, setExercises] = useState([]);
   const [exerciseProgress, setExerciseProgress] = useState({});
@@ -206,7 +204,9 @@ export const RoutinePost = () => {
           ))}
           <View style={styles.buttonContainer}>
             <Pressable
-              style={styles.button}
+              style={({ pressed }) =>
+                pressed ? { ...styles.button, opacity: 0.5 } : styles.button
+              }
               onPress={() =>
                 navigation.navigate("Exercise Feed", {
                   //La función onAddExercises se podrá llamar en el hijo (ExerciseFeed) y así podremos pasar datos usando goback()
@@ -278,7 +278,9 @@ export const RoutinePost = () => {
           </View>
           <View style={styles.buttonContainer}>
             <Pressable
-              style={styles.button}
+              style={({ pressed }) =>
+                pressed ? { ...styles.button, opacity: 0.5 } : styles.button
+              }
               onPress={() =>
                 navigation.navigate("Exercise Feed", {
                   //La función onAddExercises se podrá llamar en el hijo (ExerciseFeed) y así puedo pasar datos usando goback()

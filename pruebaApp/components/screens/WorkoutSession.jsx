@@ -162,7 +162,9 @@ export const WorkoutSession = () => {
           ))}
           <View style={styles.buttonContainer}>
             <Pressable
-              style={styles.button}
+              style={({ pressed }) => [
+                pressed ? { ...styles.button, opacity: 0.6 } : styles.button,
+              ]}
               onPress={() =>
                 navigation.navigate("Exercise Feed", {
                   //La función onAddExercises se podrá llamar en el hijo (ExerciseFeed) y así podremos pasar datos usando goback()
@@ -214,7 +216,11 @@ export const WorkoutSession = () => {
                 </Text>
               </Pressable>
               <Pressable
-                style={styles.buttonDelete}
+                style={({ pressed }) => [
+                  pressed
+                    ? { ...styles.buttonDelete, opacity: 0.6 }
+                    : styles.buttonDelete,
+                ]}
                 onPress={() => setShowAlert(true)}
               >
                 <Text style={styles.buttonTextDelete}>Discard Workout</Text>
@@ -235,7 +241,9 @@ export const WorkoutSession = () => {
           </View>
           <View style={styles.buttonContainer}>
             <Pressable
-              style={styles.button}
+              style={({ pressed }) => [
+                pressed ? { ...styles.button, opacity: 0.6 } : styles.button,
+              ]}
               onPress={() =>
                 navigation.navigate("Exercise Feed", {
                   //La función onAddExercises se podrá llamar en el hijo (ExerciseFeed) y así puedo pasar datos usando goback()
@@ -257,7 +265,11 @@ export const WorkoutSession = () => {
               </View>
             </Pressable>
             <Pressable
-              style={styles.buttonDeleteWOFlex}
+              style={({ pressed }) => [
+                pressed
+                  ? { ...styles.buttonDeleteWOFlex, opacity: 0.6 }
+                  : styles.buttonDeleteWOFlex,
+              ]}
               onPress={() => setShowAlert(true)}
             >
               <Text style={styles.buttonTextDelete}>Discard Workout</Text>

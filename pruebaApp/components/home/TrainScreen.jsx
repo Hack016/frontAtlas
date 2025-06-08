@@ -170,7 +170,12 @@ export default function TrainScreen() {
                 </Pressable>
               </View>
               <Pressable
-                style={styles.startroutineButton}
+                // style={styles.startroutineButton}
+                style={({ pressed }) =>
+                  pressed
+                    ? { ...styles.startroutineButton, opacity: 0.5 }
+                    : styles.startroutineButton
+                }
                 onPress={async () => {
                   const result = await fetchRoutineDetails(routine.idSesion);
                   if (result.success) {

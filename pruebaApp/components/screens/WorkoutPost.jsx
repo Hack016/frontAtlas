@@ -2,7 +2,6 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   StyleSheet,
   ScrollView,
   Pressable,
@@ -19,6 +18,7 @@ import { WorkoutTimeContext } from "../../context/WorkoutTimeContext";
 import Modal from "react-native-modal";
 import { WorkoutAlert } from "../../utils/Alerts/workoutAlert";
 import { useNavigation } from "@react-navigation/native";
+import { PostSessionAlert } from "../../utils/Alerts/PostSessionAlert";
 
 export default function WorkoutPost() {
   const fetchWithAuth = useFetchWithAuth();
@@ -37,6 +37,7 @@ export default function WorkoutPost() {
   const [customMinutes, setCustomMinutes] = useState(Math.floor(seconds / 60));
   const [openDatePicker, setOpenDatePicker] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [showNameAlert, setShowNameAlert] = useState(false);
 
   const handleSaveWorkout = async () => {
     const payload = {
@@ -102,6 +103,10 @@ export default function WorkoutPost() {
             });
           }}
         />
+        <PostSessionAlert
+          visible={showNameAlert}
+          onCancel={() => setShowNameAlert(false)}
+        />
         <TextInput
           style={styles.input}
           placeholder="Workout title"
@@ -122,9 +127,9 @@ export default function WorkoutPost() {
 
         <View style={styles.row}>
           <Text style={styles.label}>Duration</Text>
-          <TouchableOpacity onPress={() => setIsDurationPickerVisible(true)}>
+          <Pressable onPress={() => setIsDurationPickerVisible(true)}>
             <Text style={styles.value}>{formatTime(customMinutes)}</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         {/* Modal Picker de minutos */}
@@ -209,18 +214,32 @@ export default function WorkoutPost() {
         <View style={styles.separator} />
 
         <View style={styles.bottomrow}>
-          <TouchableOpacity
-            style={styles.bottomButton}
+          <Pressable
+            style={({ pressed }) => [
+              pressed
+                ? { ...styles.bottomButton, opacity: 0.6 }
+                : styles.bottomButton,
+            ]}
             onPress={() => setShowAlert(true)}
           >
             <Text style={styles.discardText}>Discard Workout</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.bottomButton}
-            onPress={() => handleSaveWorkout()}
+          </Pressable>
+          <Pressable
+            style={({ pressed }) => [
+              pressed
+                ? { ...styles.bottomButton, opacity: 0.6 }
+                : styles.bottomButton,
+            ]}
+            onPress={() => {
+              if (nombre.trim().length > 0) {
+                handleSaveWorkout();
+              } else {
+                setShowNameAlert(true);
+              }
+            }}
           >
             <Text style={styles.saveText}>Save workout</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </ScrollView>
     </View>

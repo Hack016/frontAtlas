@@ -227,7 +227,12 @@ export default function ProfileFeedScreen() {
             <Text style={styles.sesionesTitulo}>Dashboard</Text>
             <View style={styles.dashboardRow}>
               <Pressable
-                style={styles.dashboardButton}
+                // style={styles.dashboardButton}
+                style={({ pressed }) => [
+                  pressed
+                    ? { ...styles.dashboardButton, opacity: 0.5 }
+                    : styles.dashboardButton,
+                ]}
                 onPress={() => navigation.navigate("Statistics")}
               >
                 <FontAwesome6
@@ -238,7 +243,11 @@ export default function ProfileFeedScreen() {
                 <Text style={styles.dashboardButtonTitle}>Statistics</Text>
               </Pressable>
               <Pressable
-                style={styles.dashboardButton}
+                style={({ pressed }) => [
+                  pressed
+                    ? { ...styles.dashboardButton, opacity: 0.5 }
+                    : styles.dashboardButton,
+                ]}
                 onPress={() => navigation.navigate("Exercises")}
               >
                 <FontAwesome6

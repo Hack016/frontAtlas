@@ -200,7 +200,11 @@ export const EditProfile = () => {
               showActionSheetWithOptions,
             })
           }
-          style={styles.botonCambiar}
+          style={({ pressed }) => [
+            pressed
+              ? { ...styles.botonCambiar, opacity: 0.6 }
+              : styles.botonCambiar,
+          ]}
         >
           <Text style={styles.botonTexto}>Cambiar foto de perfil</Text>
         </Pressable>
@@ -270,7 +274,12 @@ export const EditProfile = () => {
         )}
 
         <View style={styles.divider}></View>
-        <Pressable onPress={handleSave} style={styles.saveButton}>
+        <Pressable
+          onPress={handleSave}
+          style={({ pressed }) =>
+            pressed ? { ...styles.saveButton, opacity: 0.6 } : styles.saveButton
+          }
+        >
           <Text style={styles.saveButtonText}>Save</Text>
         </Pressable>
       </View>

@@ -125,13 +125,21 @@ export default function FollowRequests() {
       <View style={styles.buttonRow}>
         <Pressable
           onPress={() => handleAccept(item.username)}
-          style={styles.acceptButton}
+          style={({ pressed }) => [
+            pressed
+              ? { ...styles.acceptButton, opacity: 0.5 }
+              : styles.acceptButton,
+          ]}
         >
           <Text style={styles.buttonText}>Confirm</Text>
         </Pressable>
         <Pressable
           onPress={() => handleDecline(item.username)}
-          style={styles.declineButton}
+          style={({ pressed }) => [
+            pressed
+              ? { ...styles.declineButton, opacity: 0.5 }
+              : styles.declineButton,
+          ]}
         >
           <Text style={styles.buttonText}>Delete</Text>
         </Pressable>

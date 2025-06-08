@@ -179,21 +179,33 @@ export default function VisitFollowed() {
         "following" ? (
         <Pressable
           onPress={() => setSelectedUser(item)}
-          style={styles.followButton}
+          style={({ pressed }) => [
+            pressed
+              ? { ...styles.followButton, opacity: 0.5 }
+              : styles.followButton,
+          ]}
         >
           <Text style={styles.followButtonText}>UnFollow</Text>
         </Pressable>
       ) : item.follow_status === "requested" ? (
         <Pressable
           onPress={() => handlePending(item.username)}
-          style={styles.pendingButton}
+          style={({ pressed }) => [
+            pressed
+              ? { ...styles.pendingButton, opacity: 0.5 }
+              : styles.pendingButton,
+          ]}
         >
           <Text style={styles.pendingButtonText}>Requested</Text>
         </Pressable>
       ) : (
         <Pressable
           onPress={() => handleFollow(item.username)}
-          style={styles.followButton}
+          style={({ pressed }) => [
+            pressed
+              ? { ...styles.followButton, opacity: 0.5 }
+              : styles.followButton,
+          ]}
         >
           <Text style={styles.followButtonText}>Follow</Text>
         </Pressable>
