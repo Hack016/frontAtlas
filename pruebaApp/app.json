@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Atlas",
-    "slug": "Atlas",
+    "slug": "AtlasApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/TitanVectorizado.png",
@@ -32,6 +32,7 @@
       }
     },
     "scheme": "atlastracker",
-    "plugins": []
+    "plugins": [],
+    "owner": "hack0"
   }
 }
